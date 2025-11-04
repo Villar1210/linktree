@@ -1,0 +1,130 @@
+{
+    "name": "Lumiar Imóveis - Seu Portal Imobiliário",
+    "short_name": "Lumiar Imóveis",
+    "description": "Encontre o imóvel dos seus sonhos com a Lumiar Imóveis. Apartamentos, casas e terrenos com as melhores condições do mercado.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#2563eb",
+    "orientation": "portrait",
+    "scope": "/",
+    "lang": "pt-BR",
+    "dir": "ltr",
+    "categories": ["business", "productivity", "lifestyle"],
+    "icons": [
+        {
+            "src": "/static/images/icon-72x72.png",
+            "sizes": "72x72",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/static/images/icon-96x96.png",
+            "sizes": "96x96",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/static/images/icon-128x128.png",
+            "sizes": "128x128",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/static/images/icon-144x144.png",
+            "sizes": "144x144",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/static/images/icon-152x152.png",
+            "sizes": "152x152",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/static/images/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/static/images/icon-384x384.png",
+            "sizes": "384x384",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/static/images/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Ver Empreendimentos",
+            "short_name": "Empreendimentos",
+            "description": "Veja todos os imóveis disponíveis",
+            "url": "/empreendimentos",
+            "icons": [
+                {
+                    "src": "/static/images/shortcut-empreendimentos.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                }
+            ]
+        },
+        {
+            "name": "Falar no WhatsApp",
+            "short_name": "WhatsApp",
+            "description": "Entre em contato conosco",
+            "url": "https://wa.me/5511999999999?text=Olá! Vim do site da Lumiar Imóveis e gostaria de mais informações.",
+            "icons": [
+                {
+                    "src": "/static/images/shortcut-whatsapp.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                }
+            ]
+        },
+        {
+            "name": "Campanhas Especiais",
+            "short_name": "Campanhas",
+            "description": "Ofertas e promoções especiais",
+            "url": "/campanhas",
+            "icons": [
+                {
+                    "src": "/static/images/shortcut-campanhas.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                }
+            ]
+        },
+        {
+            "name": "Trabalhe Conosco",
+            "short_name": "Vagas",
+            "description": "Oportunidades de carreira",
+            "url": "/vagas",
+            "icons": [
+                {
+                    "src": "/static/images/shortcut-vagas.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                }
+            ]
+        }
+    ],
+    "prefer_related_applications": false,
+    "related_applications": [],
+    "share_target": {
+        "action": "/share",
+        "method": "POST",
+        "enctype": "multipart/form-data",
+        "params": {
+            "title": "title",
+            "text": "text",
+            "url": "url"
+        }
+    }
+}

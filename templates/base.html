@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Lumiar - Empreendimentos{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="description" content="Empreendimentos Lumiar - Imóveis de qualidade com localização privilegiada">
+    <meta name="author" content="Construtora Lumiar">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>🏗️ Lumiar</h1>
+                    <span>Construindo sonhos</span>
+                </div>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Início</a>
+                    <a href="/empreendimentos" class="nav-link">Empreendimentos</a>
+                    <a href="/campanhas" class="nav-link">Campanhas</a>
+                    <a href="/vagas" class="nav-link">Vagas</a>
+                    <a href="/contato" class="nav-link">Contato</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3>Construtora Lumiar</h3>
+                    <p>Construindo o futuro com qualidade e inovação</p>
+                </div>
+                <div class="footer-contact">
+                    <h4>Contato</h4>
+                    <p>📧 contato@lumiar.com.br</p>
+                    <p>📱 (11) 99999-9999</p>
+                </div>
+                <div class="footer-social">
+                    <h4>Redes Sociais</h4>
+                    <div class="social-links">
+                        <a href="https://wa.me/{{ WHATSAPP_DANIEL }}?text=Olá! Vim do site da Lumiar" target="_blank" class="social-link whatsapp">
+                            💬 WhatsApp Daniel
+                        </a>
+                        <a href="https://wa.me/{{ WHATSAPP_VENDAS }}?text=Olá! Gostaria de informações sobre os empreendimentos" target="_blank" class="social-link whatsapp">
+                            💬 WhatsApp Vendas
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Construtora Lumiar. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Configurações globais JavaScript -->
+    <script>
+        window.LUMIAR_CONFIG = {
+            whatsapp: {
+                daniel: '{{ WHATSAPP_DANIEL }}',
+                vendas: '{{ WHATSAPP_VENDAS }}'
+            }
+        };
+    </script>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

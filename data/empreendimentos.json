@@ -1,0 +1,180 @@
+{
+  "empreendimentos": [
+    {
+      "id": 1,
+      "nome": "Residencial Vila Madalena",
+      "tipo": "Apartamento",
+      "status": "Disponível",
+      "preco": "R$ 450.000",
+      "localizacao": "Vila Madalena, SP",
+      "quartos": 2,
+      "banheiros": 2,
+      "area": "65m²",
+      "imagem": "/static/images/vila-madalena.jpg",
+      "descricao": "Moderno apartamento em localização privilegiada com acabamentos de primeira linha",
+      "whatsapp_message": "Olá! Gostaria de saber mais sobre o Residencial Vila Madalena. Vi no site da Lumiar."
+    },
+    {
+      "id": 2,
+      "nome": "Casa Morumbi Premium",
+      "tipo": "Casa",
+      "status": "Lançamento",
+      "preco": "R$ 850.000",
+      "localizacao": "Morumbi, SP",
+      "quartos": 3,
+      "banheiros": 3,
+      "area": "180m²",
+      "imagem": "/static/images/morumbi.jpg",
+      "descricao": "Casa de alto padrão com acabamentos diferenciados e área de lazer completa",
+      "whatsapp_message": "Olá! Tenho interesse na Casa Morumbi Premium que vi no site da Lumiar."
+    },
+    {
+      "id": 3,
+      "nome": "Cobertura Itaim Bibi",
+      "tipo": "Cobertura",
+      "status": "Em Obras",
+      "preco": "R$ 1.200.000",
+      "localizacao": "Itaim Bibi, SP",
+      "quartos": 4,
+      "banheiros": 4,
+      "area": "220m²",
+      "imagem": "/static/images/itaim.jpg",
+      "descricao": "Cobertura duplex com vista panorâmica e terraço gourmet",
+      "whatsapp_message": "Olá! Quero mais informações sobre a Cobertura Itaim Bibi."
+    },
+    {
+      "id": 4,
+      "nome": "Apartamento Jardins",
+      "tipo": "Apartamento",
+      "status": "Disponível",
+      "preco": "R$ 380.000",
+      "localizacao": "Jardins, SP",
+      "quartos": 1,
+      "banheiros": 1,
+      "area": "45m²",
+      "imagem": "/static/images/jardins.jpg",
+      "descricao": "Apartamento compacto e moderno no coração dos Jardins",
+      "whatsapp_message": "Olá! Gostaria de visitar o Apartamento Jardins."
+    },
+    {
+      "id": 5,
+      "nome": "Casa Alphaville",
+      "tipo": "Casa",
+      "status": "Disponível",
+      "preco": "R$ 950.000",
+      "localizacao": "Alphaville, SP",
+      "quartos": 4,
+      "banheiros": 4,
+      "area": "250m²",
+      "imagem": "/static/images/alphaville.jpg",
+      "descricao": "Casa em condomínio fechado com segurança 24h e área verde",
+      "whatsapp_message": "Olá! Tenho interesse na Casa Alphaville que vi no site."
+    }
+  ],
+  "campanhas": [
+    {
+      "titulo": "🚀 CAMPANHA RELÂMPAGO",
+      "subtitulo": "Desconto especial por tempo limitado!",
+      "desconto": "15% OFF",
+      "prazo": "Válido até 31/12/2024",
+      "empreendimentos": [1, 2, 4],
+      "condicoes": [
+        "Válido para pagamento à vista",
+        "Entrada de 30% do valor",
+        "Documentação aprovada em até 48h",
+        "Não cumulativo com outras promoções"
+      ]
+    },
+    {
+      "titulo": "💎 LANÇAMENTO VIP",
+      "subtitulo": "Condições especiais para os primeiros compradores",
+      "desconto": "Entrada facilitada",
+      "prazo": "Primeiras 20 unidades",
+      "empreendimentos": [2, 3],
+      "condicoes": [
+        "Entrada a partir de 10%",
+        "Financiamento até 30 anos",
+        "Taxa de documentação grátis",
+        "Brinde: Mobiliário planejado"
+      ]
+    }
+  ],
+  "vagas": [
+    {
+      "cargo": "Corretor de Imóveis Sênior",
+      "tipo": "Presencial/Híbrido",
+      "salario": "R$ 3.000 + comissões",
+      "requisitos": [
+        "Experiência mínima de 3 anos",
+        "CRECI ativo",
+        "Conhecimento em CRM",
+        "Carteira de clientes"
+      ],
+      "beneficios": [
+        "Comissão diferenciada até 4%",
+        "Vale alimentação R$ 600",
+        "Plano de saúde",
+        "Carro da empresa"
+      ],
+      "contato": "Fale com Daniel para mais informações"
+    },
+    {
+      "cargo": "Corretor de Imóveis Júnior",
+      "tipo": "Presencial",
+      "salario": "R$ 2.000 + comissões",
+      "requisitos": [
+        "CRECI ativo ou em processo",
+        "Facilidade de comunicação",
+        "Proatividade e determinação",
+        "Disponibilidade de horário"
+      ],
+      "beneficios": [
+        "Treinamento completo",
+        "Comissão progressiva até 3%",
+        "Vale alimentação R$ 400",
+        "Leads qualificados"
+      ],
+      "contato": "Fale com Daniel para mais informações"
+    },
+    {
+      "cargo": "Coordenador de Vendas",
+      "tipo": "Presencial",
+      "salario": "R$ 5.000 + participação",
+      "requisitos": [
+        "Experiência em liderança de equipe",
+        "Conhecimento em gestão de vendas",
+        "CRECI ativo",
+        "Formação superior desejável"
+      ],
+      "beneficios": [
+        "Participação nos resultados",
+        "Plano de saúde premium",
+        "Carro executivo",
+        "Bonificação por metas"
+      ],
+      "contato": "Fale com Daniel para mais informações"
+    }
+  ],
+  "configuracoes": {
+    "whatsapp_daniel": "5511999999999",
+    "whatsapp_vendas": "5511888888888",
+    "email": "contato@lumiar.com.br",
+    "telefone": "(11) 99999-9999",
+    "endereco": "Av. Paulista, 1000 - São Paulo, SP",
+    "horario_funcionamento": "Segunda a Sexta: 8h às 18h | Sábado: 8h às 14h",
+    "responsaveis": {
+      "daniel": {
+        "nome": "Daniel",
+        "cargo": "Consultor Sênior",
+        "whatsapp": "5511999999999",
+        "especialidade": "Imóveis residenciais e comerciais"
+      },
+      "vendas": {
+        "nome": "Equipe de Vendas",
+        "cargo": "Consultores Especializados", 
+        "whatsapp": "5511888888888",
+        "especialidade": "Atendimento geral e cotações"
+      }
+    }
+  }
+}
