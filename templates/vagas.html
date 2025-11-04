@@ -1,0 +1,310 @@
+{% extends "base.html" %}
+
+{% block title %}Trabalhe Conosco - Lumiar{% endblock %}
+
+{% block content %}
+<div class="container">
+    <section class="page-header">
+        <h1>💼 Trabalhe Conosco</h1>
+        <p>Faça parte da nossa equipe e construa sua carreira no mercado imobiliário!</p>
+    </section>
+
+    <div class="vagas-grid">
+        {% for vaga in vagas %}
+        <div class="vaga-card">
+            <div class="vaga-header">
+                <h2 class="vaga-cargo">{{ vaga.cargo }}</h2>
+                <div class="vaga-badges">
+                    <span class="tipo-badge">{{ vaga.tipo }}</span>
+                    <span class="salario-badge">{{ vaga.salario }}</span>
+                </div>
+            </div>
+            
+            <div class="vaga-content">
+                {% if vaga.requisitos %}
+                <div class="vaga-section">
+                    <h4>📋 Requisitos:</h4>
+                    <ul class="requisitos-lista">
+                        {% for req in vaga.requisitos %}
+                        <li>{{ req }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                
+                {% if vaga.beneficios %}
+                <div class="vaga-section">
+                    <h4>🎁 Benefícios:</h4>
+                    <ul class="beneficios-lista">
+                        {% for beneficio in vaga.beneficios %}
+                        <li>{{ beneficio }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="vaga-footer">
+                <p class="vaga-contato">{{ vaga.contato }}</p>
+                <a href="{{ WHATSAPP_DANIEL|whatsapp_link('Olá Daniel! Tenho interesse na vaga de ' ~ vaga.cargo ~ '. Vi no site da Lumiar.') }}" 
+                   target="_blank" 
+                   class="vaga-button">
+                    💬 Quero Me Candidatar
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Informações da Empresa -->
+    <section class="empresa-info">
+        <div class="info-card">
+            <h2>🏢 Por que trabalhar na Lumiar?</h2>
+            <div class="motivos-grid">
+                <div class="motivo-item">
+                    <div class="motivo-icon">🚀</div>
+                    <h4>Crescimento Rápido</h4>
+                    <p>Oportunidades reais de crescimento profissional e pessoal</p>
+                </div>
+                <div class="motivo-item">
+                    <div class="motivo-icon">💰</div>
+                    <h4>Remuneração Competitiva</h4>
+                    <p>Salário compatível com o mercado + comissões atrativas</p>
+                </div>
+                <div class="motivo-item">
+                    <div class="motivo-icon">🎯</div>
+                    <h4>Treinamento Contínuo</h4>
+                    <p>Capacitação constante para se manter atualizado</p>
+                </div>
+                <div class="motivo-item">
+                    <div class="motivo-icon">🤝</div>
+                    <h4>Ambiente Colaborativo</h4>
+                    <p>Equipe unida focada em resultados e bom relacionamento</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="whatsapp-section">
+        <div class="whatsapp-card">
+            <div class="whatsapp-content">
+                <div class="whatsapp-icon">💬</div>
+                <div class="whatsapp-text">
+                    <h3>Não encontrou a vaga ideal?</h3>
+                    <p>Mande seu currículo! Sempre estamos em busca de talentos</p>
+                </div>
+            </div>
+            <a href="{{ WHATSAPP_DANIEL|whatsapp_link('Olá Daniel! Gostaria de enviar meu currículo para futuras oportunidades na Lumiar.') }}" 
+               target="_blank" 
+               class="whatsapp-button">
+                Enviar Currículo
+            </a>
+        </div>
+    </section>
+</div>
+
+<style>
+/* Estilos específicos para vagas */
+.vagas-grid {
+    display: grid;
+    gap: 2rem;
+    margin-bottom: 4rem;
+}
+
+.vaga-card {
+    background: white;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: all 0.3s;
+    border-left: 4px solid var(--primary-color);
+}
+
+.vaga-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.vaga-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 2rem;
+}
+
+.vaga-cargo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.vaga-badges {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.tipo-badge, .salario-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.tipo-badge {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.salario-badge {
+    background: var(--success-color);
+    color: white;
+}
+
+.vaga-content {
+    padding: 2rem;
+}
+
+.vaga-section {
+    margin-bottom: 2rem;
+}
+
+.vaga-section h4 {
+    color: var(--dark-color);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.requisitos-lista, .beneficios-lista {
+    list-style: none;
+    padding: 0;
+}
+
+.requisitos-lista li, .beneficios-lista li {
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+    color: var(--gray-600);
+    line-height: 1.5;
+}
+
+.requisitos-lista li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.beneficios-lista li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--success-color);
+    font-weight: bold;
+}
+
+.vaga-footer {
+    background: var(--light-color);
+    padding: 2rem;
+    text-align: center;
+}
+
+.vaga-contato {
+    color: var(--gray-600);
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+.vaga-button {
+    background: linear-gradient(135deg, var(--success-color), #047857);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+}
+
+.vaga-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(5, 150, 105, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+/* Empresa Info */
+.empresa-info {
+    margin-bottom: 4rem;
+}
+
+.info-card {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 3rem 2rem;
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.info-card h2 {
+    color: var(--dark-color);
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.motivos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.motivo-item {
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.motivo-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.motivo-item h4 {
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.motivo-item p {
+    color: var(--gray-600);
+    line-height: 1.5;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .vaga-badges {
+        flex-direction: column;
+    }
+    
+    .motivos-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .vaga-cargo {
+        font-size: 1.25rem;
+    }
+    
+    .info-card {
+        padding: 2rem 1rem;
+    }
+    
+    .info-card h2 {
+        font-size: 1.5rem;
+    }
+}
+</style>
+{% endblock %}
