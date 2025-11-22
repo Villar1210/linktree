@@ -1,4 +1,7 @@
 #!/bin/bash
+cd /root/linktree
+pkill -f app.py
+nohup python3 app.py > app.log 2>&1 &#!/bin/bash
 # Script de Reinicialização - Via WinSCP
 # Arquivo: restart-app.sh
 
