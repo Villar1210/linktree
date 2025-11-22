@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Lumiar - Empreendimentos{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="description" content="Empreendimentos Lumiar - Imóveis de qualidade com localização privilegiada">
+    <meta name="author" content="Construtora Lumiar">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>🏗️ Lumiar</h1>
+                    <span>Construindo sonhos</span>
+                </div>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Início</a>
+                    <a href="/empreendimentos" class="nav-link">Empreendimentos</a>
+                    <a href="/contato" class="nav-link">Contato</a>
+                    
+                    <!-- Área do Membro -->
+                    <div class="nav-dropdown">
+                        {% if session.user_id %}
+                            <a href="#" class="nav-link dropdown-toggle">
+                                👤 {{ session.user_name or 'Minha Área' }}
+                            </a>
+                            <div class="dropdown-menu">
+                                <a href="/auth/profile" class="dropdown-item">
+                                    <span class="dropdown-icon">👤</span>
+                                    Meu Perfil
+                                </a>
+                                {% if session.user_type == 'admin' %}
+                                    <a href="/admin/dashboard" class="dropdown-item">
+                                        <span class="dropdown-icon">⚙️</span>
+                                        Painel Admin
+                                    </a>
+                                {% elif session.user_type == 'corretor' %}
+                                    <a href="/corretor/dashboard" class="dropdown-item">
+                                        <span class="dropdown-icon">💼</span>
+                                        Dashboard
+                                    </a>
+                                {% elif session.user_type == 'imobiliaria' %}
+                                    <a href="/imobiliaria/dashboard" class="dropdown-item">
+                                        <span class="dropdown-icon">🏢</span>
+                                        Painel Imobiliária
+                                    </a>
+                                {% elif session.user_type == 'cliente' %}
+                                    <a href="/cliente/dashboard" class="dropdown-item">
+                                        <span class="dropdown-icon">🏠</span>
+                                        Meus Favoritos
+                                    </a>
+                                {% endif %}
+                                <hr class="dropdown-divider">
+                                <a href="/auth/logout" class="dropdown-item logout">
+                                    <span class="dropdown-icon">🚪</span>
+                                    Sair
+                                </a>
+                            </div>
+                        {% else %}
+                            <a href="#" class="nav-link dropdown-toggle">
+                                👤 Área do Membro
+                            </a>
+                            <div class="dropdown-menu">
+                                <a href="/auth/login" class="dropdown-item">
+                                    <span class="dropdown-icon">🔑</span>
+                                    Fazer Login
+                                </a>
+                                <a href="/auth/register" class="dropdown-item">
+                                    <span class="dropdown-icon">📝</span>
+                                    Criar Conta
+                                </a>
+                                <hr class="dropdown-divider">
+                                <div class="dropdown-info">
+                                    <small>Cadastre-se como:</small>
+                                </div>
+                                <a href="/auth/register/cliente" class="dropdown-item small">
+                                    <span class="dropdown-icon">👤</span>
+                                    Cliente
+                                </a>
+                                <a href="/auth/register/corretor" class="dropdown-item small">
+                                    <span class="dropdown-icon">💼</span>
+                                    Corretor
+                                </a>
+                                <a href="/auth/register/imobiliaria" class="dropdown-item small">
+                                    <span class="dropdown-icon">🏢</span>
+                                    Imobiliária
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3>Construtora Lumiar</h3>
+                    <p>Construindo o futuro com qualidade e inovação</p>
+                </div>
+                <div class="footer-contact">
+                    <h4>Contato</h4>
+                    <p>📧 contato@lumiar.com.br</p>
+                    <p>📱 (11) 99999-9999</p>
+                </div>
+                <div class="footer-social">
+                    <h4>Redes Sociais</h4>
+                    <div class="social-links">
+                        <a href="https://wa.me/{{ WHATSAPP_DANIEL }}?text=Olá! Vim do site da Lumiar" target="_blank" class="social-link whatsapp">
+                            💬 WhatsApp
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Construtora Lumiar. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 🚀 iVillar Linktree - Dropdown Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // ======= DROPDOWN MENU FUNCTIONALITY =======
+            const dropdowns = document.querySelectorAll('.nav-dropdown');
+            
+            dropdowns.forEach(dropdown => {
+                const toggle = dropdown.querySelector('.dropdown-toggle');
+                const menu = dropdown.querySelector('.dropdown-menu');
+                
+                if (toggle && menu) {
+                    // Click toggle functionality for mobile
+                    toggle.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        // Close other dropdowns
+                        dropdowns.forEach(otherDropdown => {
+                            if (otherDropdown !== dropdown) {
+                                otherDropdown.classList.remove('active');
+                            }
+                        });
+                        
+                        // Toggle current dropdown
+                        dropdown.classList.toggle('active');
+                    });
+                }
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.nav-dropdown')) {
+                    dropdowns.forEach(dropdown => {
+                        dropdown.classList.remove('active');
+                    });
+                }
+            });
+            
+            // Close dropdown on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    dropdowns.forEach(dropdown => {
+                        dropdown.classList.remove('active');
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

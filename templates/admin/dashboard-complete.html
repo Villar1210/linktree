@@ -1,0 +1,878 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Painel Administrativo - Lumiar{% endblock %}
+
+{% block dashboard_content %}
+<div class="admin-panel">
+    <!-- Header do Admin -->
+    <div class="admin-header">
+        <div class="admin-welcome">
+            <h1>🛠️ Painel Administrativo</h1>
+            <p>Gerencie todos os aspectos da plataforma Lumiar</p>
+        </div>
+        <div class="admin-stats">
+            <div class="stat-card">
+                <span class="stat-number">{{ stats.total_users }}</span>
+                <span class="stat-label">Usuários Total</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">{{ stats.pending_users }}</span>
+                <span class="stat-label">Pendentes</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">{{ stats.total_properties }}</span>
+                <span class="stat-label">Imóveis</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navegação por Abas -->
+    <div class="admin-tabs">
+        <button class="tab-button active" onclick="showTab('users')">👥 Usuários</button>
+        <button class="tab-button" onclick="showTab('properties')">🏠 Imóveis</button>
+        <button class="tab-button" onclick="showTab('emails')">📧 E-mails</button>
+        <button class="tab-button" onclick="showTab('social')">🌐 Redes Sociais</button>
+        <button class="tab-button" onclick="showTab('whatsapp')">💬 WhatsApp</button>
+        <button class="tab-button" onclick="showTab('settings')">⚙️ Configurações</button>
+    </div>
+
+    <!-- Aba Usuários -->
+    <div id="users-tab" class="tab-content active">
+        <div class="section-header">
+            <h2>👥 Gerenciamento de Usuários</h2>
+            <div class="section-actions">
+                <button class="btn btn-primary" onclick="showAddUserModal()">
+                    <span class="btn-icon">➕</span>
+                    Adicionar Usuário
+                </button>
+                <select class="filter-select" onchange="filterUsers(this.value)">
+                    <option value="">Todos os tipos</option>
+                    <option value="cliente">Clientes</option>
+                    <option value="corretor">Corretores</option>
+                    <option value="imobiliaria">Imobiliárias</option>
+                    <option value="admin">Administradores</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="users-grid">
+            {% for user in users %}
+            <div class="user-card" data-type="{{ user.tipo }}">
+                <div class="user-header">
+                    <div class="user-avatar">
+                        {% if user.tipo == 'admin' %}👑
+                        {% elif user.tipo == 'corretor' %}💼
+                        {% elif user.tipo == 'imobiliaria' %}🏢
+                        {% else %}👤{% endif %}
+                    </div>
+                    <div class="user-info">
+                        <h3>{{ user.nome }}</h3>
+                        <p>{{ user.email }}</p>
+                        <span class="user-type {{ user.tipo }}">{{ user.tipo.title() }}</span>
+                    </div>
+                </div>
+                <div class="user-status">
+                    {% if user.aprovado %}
+                        <span class="status approved">✅ Aprovado</span>
+                    {% else %}
+                        <span class="status pending">⏳ Pendente</span>
+                    {% endif %}
+                </div>
+                <div class="user-actions">
+                    {% if not user.aprovado %}
+                    <button class="btn btn-success btn-sm" onclick="approveUser({{ user.id }})">
+                        Aprovar
+                    </button>
+                    {% endif %}
+                    <button class="btn btn-warning btn-sm" onclick="editUser({{ user.id }})">
+                        Editar
+                    </button>
+                    <button class="btn btn-danger btn-sm" onclick="deleteUser({{ user.id }})">
+                        Excluir
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Aba Imóveis -->
+    <div id="properties-tab" class="tab-content">
+        <div class="section-header">
+            <h2>🏠 Gerenciamento de Imóveis</h2>
+            <button class="btn btn-primary" onclick="showAddPropertyModal()">
+                <span class="btn-icon">🏡</span>
+                Adicionar Imóvel
+            </button>
+        </div>
+
+        <div class="properties-list">
+            <div class="property-item">
+                <div class="property-preview">
+                    <img src="/static/images/placeholder.jpg" alt="Imóvel">
+                </div>
+                <div class="property-details">
+                    <h3>Residencial Suzano Gardens</h3>
+                    <p>📍 Suzano, SP</p>
+                    <span class="property-price">R$ 320.000</span>
+                    <span class="property-status lancamento">🆕 Lançamento</span>
+                </div>
+                <div class="property-actions">
+                    <button class="btn btn-secondary btn-sm">Editar</button>
+                    <button class="btn btn-danger btn-sm">Excluir</button>
+                </div>
+            </div>
+            <!-- Mais imóveis aqui -->
+        </div>
+
+        <!-- Botão para adicionar mais -->
+        <div class="add-more-section">
+            <button class="btn-add-more" onclick="showAddPropertyModal()">
+                <span class="add-icon">➕</span>
+                <span>Adicionar Novo Imóvel</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Aba E-mails -->
+    <div id="emails-tab" class="tab-content">
+        <div class="section-header">
+            <h2>📧 Configurações de E-mail</h2>
+        </div>
+
+        <form class="email-config-form" action="/admin/save-email-config" method="POST">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>📧 E-mail Principal</label>
+                    <input type="email" name="email_principal" value="{{ config.email_principal or 'contato@lumiar.com.br' }}" required>
+                </div>
+                <div class="form-group">
+                    <label>📨 E-mail Vendas</label>
+                    <input type="email" name="email_vendas" value="{{ config.email_vendas or 'vendas@lumiar.com.br' }}" required>
+                </div>
+                <div class="form-group">
+                    <label>💼 E-mail RH</label>
+                    <input type="email" name="email_rh" value="{{ config.email_rh or 'rh@lumiar.com.br' }}" required>
+                </div>
+                <div class="form-group">
+                    <label>🆘 E-mail Suporte</label>
+                    <input type="email" name="email_suporte" value="{{ config.email_suporte or 'suporte@lumiar.com.br' }}" required>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3>📬 Configurações SMTP</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Servidor SMTP</label>
+                        <input type="text" name="smtp_server" value="{{ config.smtp_server or 'smtp.gmail.com' }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Porta SMTP</label>
+                        <input type="number" name="smtp_port" value="{{ config.smtp_port or '587' }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Usuário SMTP</label>
+                        <input type="email" name="smtp_user" value="{{ config.smtp_user }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Senha SMTP</label>
+                        <input type="password" name="smtp_password" placeholder="••••••••">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <span class="btn-icon">💾</span>
+                Salvar Configurações
+            </button>
+        </form>
+    </div>
+
+    <!-- Aba Redes Sociais -->
+    <div id="social-tab" class="tab-content">
+        <div class="section-header">
+            <h2>🌐 Redes Sociais</h2>
+        </div>
+
+        <form class="social-config-form" action="/admin/save-social-config" method="POST">
+            <div class="social-platforms">
+                <div class="platform-card facebook">
+                    <div class="platform-header">
+                        <span class="platform-icon">📘</span>
+                        <h3>Facebook</h3>
+                    </div>
+                    <div class="form-group">
+                        <label>URL do Perfil/Página</label>
+                        <input type="url" name="facebook_url" value="{{ config.facebook_url or '' }}" placeholder="https://facebook.com/construtora.lumiar">
+                    </div>
+                    <div class="form-group">
+                        <label>ID da Página (para integração)</label>
+                        <input type="text" name="facebook_page_id" value="{{ config.facebook_page_id or '' }}" placeholder="123456789">
+                    </div>
+                </div>
+
+                <div class="platform-card instagram">
+                    <div class="platform-header">
+                        <span class="platform-icon">📷</span>
+                        <h3>Instagram</h3>
+                    </div>
+                    <div class="form-group">
+                        <label>URL do Perfil</label>
+                        <input type="url" name="instagram_url" value="{{ config.instagram_url or '' }}" placeholder="https://instagram.com/construtora.lumiar">
+                    </div>
+                    <div class="form-group">
+                        <label>Username (sem @)</label>
+                        <input type="text" name="instagram_username" value="{{ config.instagram_username or '' }}" placeholder="construtora.lumiar">
+                    </div>
+                </div>
+
+                <div class="platform-card linkedin">
+                    <div class="platform-header">
+                        <span class="platform-icon">💼</span>
+                        <h3>LinkedIn</h3>
+                    </div>
+                    <div class="form-group">
+                        <label>URL da Empresa</label>
+                        <input type="url" name="linkedin_url" value="{{ config.linkedin_url or '' }}" placeholder="https://linkedin.com/company/construtora-lumiar">
+                    </div>
+                </div>
+
+                <div class="platform-card youtube">
+                    <div class="platform-header">
+                        <span class="platform-icon">🎥</span>
+                        <h3>YouTube</h3>
+                    </div>
+                    <div class="form-group">
+                        <label>URL do Canal</label>
+                        <input type="url" name="youtube_url" value="{{ config.youtube_url or '' }}" placeholder="https://youtube.com/@ConstrutoreLumiar">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <span class="btn-icon">💾</span>
+                Salvar Redes Sociais
+            </button>
+        </form>
+    </div>
+
+    <!-- Aba WhatsApp -->
+    <div id="whatsapp-tab" class="tab-content">
+        <div class="section-header">
+            <h2>💬 Configurações WhatsApp</h2>
+        </div>
+
+        <form class="whatsapp-config-form" action="/admin/save-whatsapp-config" method="POST">
+            <div class="whatsapp-numbers">
+                <div class="number-card primary">
+                    <div class="number-header">
+                        <span class="number-icon">👨‍💼</span>
+                        <h3>Daniel - Gerente Comercial</h3>
+                    </div>
+                    <div class="form-group">
+                        <label>Número do WhatsApp</label>
+                        <input type="tel" name="whatsapp_daniel" value="{{ config.whatsapp_daniel or '5511999887766' }}" placeholder="5511999999999">
+                        <small>Formato: 55 + DDD + Número (ex: 5511999999999)</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Mensagem Padrão</label>
+                        <textarea name="daniel_message" placeholder="Olá! Vim do site da Lumiar e gostaria de mais informações...">{{ config.daniel_message or '' }}</textarea>
+                    </div>
+                </div>
+
+                <div class="number-card secondary">
+                    <div class="number-header">
+                        <span class="number-icon">🏢</span>
+                        <h3>Vendas Geral</h3>
+                    </div>
+                    <div class="form-group">
+                        <label>Número do WhatsApp</label>
+                        <input type="tel" name="whatsapp_vendas" value="{{ config.whatsapp_vendas or '5511999776655' }}" placeholder="5511999999999">
+                    </div>
+                    <div class="form-group">
+                        <label>Mensagem Padrão</label>
+                        <textarea name="vendas_message" placeholder="Olá! Gostaria de informações sobre os empreendimentos...">{{ config.vendas_message or '' }}</textarea>
+                    </div>
+                </div>
+
+                <div class="number-card regional">
+                    <div class="number-header">
+                        <span class="number-icon">🏙️</span>
+                        <h3>WhatsApp Suzano</h3>
+                    </div>
+                    <div class="form-group">
+                        <label>Número do WhatsApp</label>
+                        <input type="tel" name="whatsapp_suzano" value="{{ config.whatsapp_suzano or '5511999665544' }}" placeholder="5511999999999">
+                    </div>
+                </div>
+
+                <div class="number-card regional">
+                    <div class="number-header">
+                        <span class="number-icon">🏔️</span>
+                        <h3>WhatsApp Mogi das Cruzes</h3>
+                    </div>
+                    <div class="form-group">
+                        <label>Número do WhatsApp</label>
+                        <input type="tel" name="whatsapp_mogi" value="{{ config.whatsapp_mogi or '5511999554433' }}" placeholder="5511999999999">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <span class="btn-icon">💾</span>
+                Salvar Configurações WhatsApp
+            </button>
+        </form>
+    </div>
+
+    <!-- Aba Configurações Gerais -->
+    <div id="settings-tab" class="tab-content">
+        <div class="section-header">
+            <h2>⚙️ Configurações Gerais</h2>
+        </div>
+
+        <form class="settings-form" action="/admin/save-general-config" method="POST">
+            <div class="settings-sections">
+                <div class="settings-section">
+                    <h3>🏢 Informações da Empresa</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nome da Empresa</label>
+                            <input type="text" name="company_name" value="{{ config.company_name or 'Construtora Lumiar' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>CNPJ</label>
+                            <input type="text" name="company_cnpj" value="{{ config.company_cnpj or '' }}" placeholder="00.000.000/0000-00">
+                        </div>
+                        <div class="form-group">
+                            <label>Telefone Principal</label>
+                            <input type="tel" name="company_phone" value="{{ config.company_phone or '(11) 99988-7766' }}">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Endereço Completo</label>
+                            <input type="text" name="company_address" value="{{ config.company_address or 'Av. Paulista, 1000 - São Paulo, SP' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>🕐 Horários de Funcionamento</h3>
+                    <div class="form-group">
+                        <label>Horário de Atendimento</label>
+                        <input type="text" name="business_hours" value="{{ config.business_hours or 'Segunda a Sexta: 8h às 18h | Sábado: 8h às 16h' }}">
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>🎨 Personalização</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Cor Primária</label>
+                            <input type="color" name="primary_color" value="{{ config.primary_color or '#2563eb' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Cor Secundária</label>
+                            <input type="color" name="secondary_color" value="{{ config.secondary_color or '#1e40af' }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <span class="btn-icon">💾</span>
+                Salvar Configurações
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Modals -->
+<div id="addUserModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>➕ Adicionar Usuário</h3>
+            <button class="modal-close" onclick="closeModal('addUserModal')">&times;</button>
+        </div>
+        <form action="/admin/add-user" method="POST">
+            <div class="form-group">
+                <label>Nome Completo</label>
+                <input type="text" name="nome" required>
+            </div>
+            <div class="form-group">
+                <label>E-mail</label>
+                <input type="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label>Tipo de Usuário</label>
+                <select name="tipo" required>
+                    <option value="">Selecione o tipo</option>
+                    <option value="cliente">Cliente</option>
+                    <option value="corretor">Corretor</option>
+                    <option value="imobiliaria">Imobiliária</option>
+                    <option value="admin">Administrador</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" name="senha" required>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('addUserModal')">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Adicionar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+/* Estilos específicos do painel administrativo */
+.admin-panel {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.admin-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 2rem;
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+
+.admin-welcome h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.admin-stats {
+    display: flex;
+    gap: 1rem;
+}
+
+.stat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    background: var(--gray-100);
+    border-radius: 8px;
+    min-width: 80px;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--gray-600);
+    text-align: center;
+}
+
+.admin-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    background: white;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    overflow-x: auto;
+}
+
+.tab-button {
+    padding: 0.75rem 1rem;
+    border: none;
+    background: transparent;
+    color: var(--gray-600);
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.tab-button:hover {
+    background: var(--gray-100);
+    color: var(--primary-color);
+}
+
+.tab-button.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.tab-content {
+    display: none;
+    background: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--gray-200);
+}
+
+.section-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.users-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.user-card {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.user-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow);
+}
+
+.user-header {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+.user-info h3 {
+    margin-bottom: 0.25rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.user-info p {
+    color: var(--gray-600);
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.user-type {
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.user-type.cliente { background: #dbeafe; color: #1e40af; }
+.user-type.corretor { background: #dcfce7; color: #166534; }
+.user-type.imobiliaria { background: #fef3c7; color: #92400e; }
+.user-type.admin { background: #fce7f3; color: #be185d; }
+
+.user-status {
+    margin-bottom: 1rem;
+}
+
+.status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status.approved {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status.pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.user-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-sm {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--dark-color);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 0.75rem;
+    border: 1px solid var(--gray-300);
+    border-radius: 6px;
+    font-size: 0.875rem;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-group small {
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--gray-600);
+}
+
+.social-platforms,
+.whatsapp-numbers {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.platform-card,
+.number-card {
+    border: 2px solid var(--gray-200);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+}
+
+.platform-card.facebook { border-color: #1877f2; }
+.platform-card.instagram { border-color: #e4405f; }
+.platform-card.linkedin { border-color: #0077b5; }
+.platform-card.youtube { border-color: #ff0000; }
+
+.number-card.primary { border-color: var(--primary-color); }
+.number-card.secondary { border-color: var(--success-color); }
+.number-card.regional { border-color: var(--warning-color); }
+
+.platform-header,
+.number-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.platform-icon,
+.number-icon {
+    font-size: 1.5rem;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--gray-600);
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gray-200);
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .admin-header {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    
+    .admin-tabs {
+        flex-wrap: wrap;
+    }
+    
+    .users-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .social-platforms,
+    .whatsapp-numbers {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+// JavaScript para funcionalidade do painel admin
+function showTab(tabName) {
+    // Esconder todas as abas
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Remover classe active de todos os botões
+    document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Mostrar aba selecionada
+    document.getElementById(tabName + '-tab').classList.add('active');
+    
+    // Ativar botão correspondente
+    event.target.classList.add('active');
+}
+
+function filterUsers(type) {
+    const cards = document.querySelectorAll('.user-card');
+    cards.forEach(card => {
+        if (type === '' || card.dataset.type === type) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+function showAddUserModal() {
+    document.getElementById('addUserModal').classList.add('show');
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.remove('show');
+}
+
+function approveUser(userId) {
+    if (confirm('Aprovar este usuário?')) {
+        fetch(`/admin/approve-user/${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Erro ao aprovar usuário');
+            }
+        });
+    }
+}
+
+function deleteUser(userId) {
+    if (confirm('Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.')) {
+        fetch(`/admin/delete-user/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Erro ao excluir usuário');
+            }
+        });
+    }
+}
+
+// Fechar modal ao clicar fora
+document.querySelectorAll('.modal').forEach(modal => {
+    modal.addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.classList.remove('show');
+        }
+    });
+});
+</script>
+{% endblock %}

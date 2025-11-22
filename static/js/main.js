@@ -1,124 +1,32 @@
-// JavaScript principal para Lumiar Linktree
+// Filtros da página de empreendimentos
 document.addEventListener('DOMContentLoaded', function() {
-    // Inicialização de funcionalidades
-    initAnimations();
-    initWhatsAppTracking();
-    initMobileMenu();
-    initScrollEffects();
-    initTooltips();
-    checkConnectionStatus();
-    preloadPages();
-    optimizePerformance();
-    initAnalytics();
-    
-    // Log de inicialização
-    console.log('🏡 Lumiar Linktree carregado com sucesso!');
-});
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const empreendimentoCards = document.querySelectorAll('.empreendimento-card');
 
-// Animações de entrada e interatividade
-function initAnimations() {
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver(function(entries) {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-                entry.target.classList.add('animated');
-            }
-        });
-    }, observerOptions);
-
-    // Observa elementos para animação
-    document.querySelectorAll('.action-card, .link-item, .hero, .whatsapp-card').forEach(element => {
-        element.style.opacity = '0';
-        element.style.transform = 'translateY(30px)';
-        element.style.transition = 'all 0.6s ease-out';
-        observer.observe(element);
-    });
-
-    // Efeito de clique nos links
-    document.querySelectorAll('.action-card, .link-item, .card-button').forEach(link => {
-        link.addEventListener('click', function(e) {
-            this.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                this.style.transform = '';
-            }, 150);
-        });
-    });
-}
-
-// Tracking de cliques no WhatsApp
-function initWhatsAppTracking() {
-    document.querySelectorAll('a[href*="wa.me"]').forEach(link => {
-        link.addEventListener('click', function() {
-            const source = this.closest('.whatsapp-section') ? 'hero_section' : 
-                          this.closest('.contact-grid') ? 'quick_contact' : 
-                          this.closest('.action-card') ? 'action_card' : 
-                          this.closest('.card-button') ? 'property_card' : 'general';
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const filter = this.getAttribute('data-filter');
             
-            trackWhatsAppClick(source);
+            // Remove active de todos os botões
+            filterButtons.forEach(btn => btn.classList.remove('active'));
             
-            // Adiciona efeito visual
-            this.style.transform = 'scale(1.05)';
-            setTimeout(() => {
-                this.style.transform = '';
-            }, 200);
-        });
-    });
-}
-
-// Menu mobile responsivo
-function initMobileMenu() {
-    const menuToggle = document.querySelector('.menu-toggle');
-    const nav = document.querySelector('.nav');
-    
-    if (menuToggle && nav) {
-        menuToggle.addEventListener('click', function() {
-            nav.classList.toggle('mobile-open');
-            this.classList.toggle('active');
-        });
-        
-        // Fecha menu ao clicar em link
-        nav.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function() {
-                nav.classList.remove('mobile-open');
-                menuToggle.classList.remove('active');
+            // Adiciona active ao botão clicado
+            this.classList.add('active');
+            
+            // Filtra os cards
+            empreendimentoCards.forEach(card => {
+                const cardType = card.getAttribute('data-tipo');
+                if (filter === 'all' || cardType === filter) {
+                    card.style.display = 'block';
+                    card.style.animation = 'fadeInUp 0.5s ease-out';
+                } else {
+                    card.style.display = 'none';
+                }
             });
         });
-    }
-}
-
-// Efeitos de scroll
-function initScrollEffects() {
-    let lastScrollTop = 0;
-    const header = document.querySelector('.header');
-    
-    window.addEventListener('scroll', function() {
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        
-        // Header dinâmico
-        if (header) {
-            if (scrollTop > lastScrollTop && scrollTop > 100) {
-                header.style.transform = 'translateY(-100%)';
-            } else {
-                header.style.transform = 'translateY(0)';
-            }
-        }
-        
-        // Parallax suave no hero
-        const hero = document.querySelector('.hero');
-        if (hero && scrollTop < hero.offsetHeight) {
-            hero.style.transform = `translateY(${scrollTop * 0.5}px)`;
-        }
-        
-        lastScrollTop = scrollTop;
     });
-    
-    // Smooth scroll para links internos
+
+    // Smooth scrolling para links internos
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             e.preventDefault();
@@ -131,219 +39,162 @@ function initScrollEffects() {
             }
         });
     });
-}
 
-// Tooltips informativos
-function initTooltips() {
-    const tooltipElements = document.querySelectorAll('[data-tooltip]');
-    
-    tooltipElements.forEach(element => {
-        element.addEventListener('mouseenter', function() {
-            showTooltip(this, this.getAttribute('data-tooltip'));
+    // Adiciona animação aos cards quando entram na viewport
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
         });
+    }, observerOptions);
+
+    // Observa todos os cards
+    document.querySelectorAll('.action-card, .empreendimento-card, .contact-item').forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        card.style.transition = 'all 0.6s ease-out';
+        observer.observe(card);
+    });
+
+    // Contador animado para estatísticas
+    function animateCounter(element, start, end, duration) {
+        let startTime = null;
         
-        element.addEventListener('mouseleave', function() {
-            hideTooltip();
+        function animation(currentTime) {
+            if (startTime === null) startTime = currentTime;
+            const timeElapsed = currentTime - startTime;
+            const progress = Math.min(timeElapsed / duration, 1);
+            
+            const value = Math.floor(progress * (end - start) + start);
+            element.textContent = value + (end > 100 ? '+' : '');
+            
+            if (progress < 1) {
+                requestAnimationFrame(animation);
+            }
+        }
+        
+        requestAnimationFrame(animation);
+    }
+
+    // Anima contadores quando visíveis
+    const counterElements = document.querySelectorAll('.stat-number');
+    const counters = [
+        { element: counterElements[1], start: 0, end: 15 },
+        { element: counterElements[2], start: 0, end: 500 }
+    ];
+
+    const counterObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const counter = counters.find(c => c.element === entry.target);
+                if (counter) {
+                    animateCounter(counter.element, counter.start, counter.end, 2000);
+                    counterObserver.unobserve(entry.target);
+                }
+            }
         });
     });
-}
 
-function showTooltip(element, text) {
-    const tooltip = document.createElement('div');
-    tooltip.className = 'tooltip';
-    tooltip.textContent = text;
-    document.body.appendChild(tooltip);
-    
-    const rect = element.getBoundingClientRect();
-    tooltip.style.left = rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2) + 'px';
-    tooltip.style.top = rect.top - tooltip.offsetHeight - 10 + 'px';
-    
-    setTimeout(() => tooltip.classList.add('show'), 10);
-}
+    counterElements.forEach(element => {
+        if (element) counterObserver.observe(element);
+    });
+});
 
-function hideTooltip() {
-    const tooltip = document.querySelector('.tooltip');
-    if (tooltip) {
-        tooltip.remove();
-    }
-}
-
-// Função global para tracking
+// Função para rastrear cliques nos botões do WhatsApp
 function trackWhatsAppClick(source) {
     if (typeof gtag !== 'undefined') {
         gtag('event', 'whatsapp_click', {
             'event_category': 'engagement',
-            'event_label': source,
-            'value': 1
+            'event_label': source
         });
     }
-    
-    if (typeof fbq !== 'undefined') {
-        fbq('track', 'Contact', {
-            source: source
-        });
-    }
-    
     console.log('WhatsApp click tracked:', source);
 }
 
-// Notificações toast
-function showToast(message, type = 'info', duration = 3000) {
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.innerHTML = `
-        <div class="toast-content">
-            <span>${message}</span>
-            <button class="toast-close" onclick="this.parentElement.parentElement.remove()">×</button>
-        </div>
-    `;
-    
-    document.body.appendChild(toast);
-    
-    setTimeout(() => toast.classList.add('show'), 100);
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-    }, duration);
-}
-
-// Detecção de conexão
-function checkConnectionStatus() {
-    if (navigator.onLine) {
-        hideOfflineMessage();
-    } else {
-        showOfflineMessage();
-    }
-}
-
-function showOfflineMessage() {
-    if (!document.querySelector('.offline-banner')) {
-        const banner = document.createElement('div');
-        banner.className = 'offline-banner';
-        banner.innerHTML = `
-            <div class="offline-content">
-                📶 Você está offline. Algumas funcionalidades podem não estar disponíveis.
-            </div>
-        `;
-        document.body.insertBefore(banner, document.body.firstChild);
-    }
-}
-
-function hideOfflineMessage() {
-    const banner = document.querySelector('.offline-banner');
-    if (banner) {
-        banner.remove();
-    }
-}
-
-// Event listeners para conexão
-window.addEventListener('online', checkConnectionStatus);
-window.addEventListener('offline', checkConnectionStatus);
-
-// Preload de páginas importantes
-function preloadPages() {
-    const importantPages = ['/empreendimentos', '/campanhas', '/vagas'];
-    
-    importantPages.forEach(page => {
-        const link = document.createElement('link');
-        link.rel = 'prefetch';
-        link.href = page;
-        document.head.appendChild(link);
-    });
-}
-
-// Otimizações de performance
-function optimizePerformance() {
-    // Lazy loading de imagens
-    const images = document.querySelectorAll('img[loading="lazy"]');
-    
-    if ('IntersectionObserver' in window) {
-        const imageObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    if (img.dataset.src) {
-                        img.src = img.dataset.src;
-                        img.classList.remove('lazy');
-                        observer.unobserve(img);
-                    }
-                }
-            });
-        });
-        
-        images.forEach(img => imageObserver.observe(img));
-    }
-}
-
-// Analytics básico
-function initAnalytics() {
-    let clickCounts = JSON.parse(localStorage.getItem('linkClicks')) || {};
-    
-    document.querySelectorAll('.link-item, .action-card').forEach(link => {
+// Adiciona tracking aos links do WhatsApp
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('a[href*="wa.me"]').forEach(link => {
         link.addEventListener('click', function() {
-            const linkText = this.querySelector('span, .card-title')?.textContent || 'Unknown';
-            clickCounts[linkText] = (clickCounts[linkText] || 0) + 1;
-            localStorage.setItem('linkClicks', JSON.stringify(clickCounts));
-            
-            console.log('Click registrado:', linkText, clickCounts[linkText]);
+            const source = this.closest('.whatsapp-section') ? 'daniel_hero' : 
+                          this.closest('.contact-grid') ? 'quick_contact' : 
+                          this.closest('.card-button') ? 'property_card' : 'general';
+            trackWhatsAppClick(source);
         });
     });
-
-    // Função global para mostrar estatísticas
-    window.showStats = function() {
-        console.table(clickCounts);
-    };
-}
-
-// Função para rastrear evento personalizado
-function trackEvent(category, action, label) {
-    if (typeof gtag !== 'undefined') {
-        gtag('event', action, {
-            'event_category': category,
-            'event_label': label
-        });
-    }
-    
-    console.log('Event tracked:', { category, action, label });
-}
-
-// Tracking para links externos
-document.addEventListener('click', function(e) {
-    const link = e.target.closest('a[href^="http"]');
-    if (link && !link.href.includes(window.location.hostname)) {
-        trackEvent('engagement', 'external_link_click', link.href);
-    }
 });
 
-// Função para copiar URL atual
-window.copyCurrentUrl = function() {
-    navigator.clipboard.writeText(window.location.href).then(function() {
-        showToast('Link copiado com sucesso!', 'success');
-    }).catch(function() {
-        showToast('Erro ao copiar link', 'error');
-    });
-};
+// Menu mobile toggle (se implementado futuramente)
+function toggleMobileMenu() {
+    const nav = document.querySelector('.nav');
+    nav.classList.toggle('mobile-open');
+}
 
-// Função para compartilhar via Web Share API
-window.shareCurrentPage = function() {
+// Lazy loading para imagens
+document.addEventListener('DOMContentLoaded', function() {
+    const images = document.querySelectorAll('img[data-src]');
+    
+    const imageObserver = new IntersectionObserver(function(entries, observer) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src;
+                img.classList.remove('lazy');
+                observer.unobserve(img);
+            }
+        });
+    });
+    
+    images.forEach(img => imageObserver.observe(img));
+});
+
+// Formulário de contato (se implementado futuramente)
+function submitContactForm(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData);
+    
+    // Aqui você pode implementar envio via AJAX
+    console.log('Form data:', data);
+    
+    // Redirecionar para WhatsApp com mensagem personalizada
+    const message = `Olá! Meu nome é ${data.nome}. ${data.mensagem}`;
+    const whatsappUrl = `https://wa.me/5511999999999?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+}
+
+// Função para compartilhar propriedade
+function shareProperty(propertyName, propertyUrl) {
     if (navigator.share) {
         navigator.share({
-            title: document.title,
-            text: 'Confira os empreendimentos da Lumiar Imóveis',
-            url: window.location.href
-        }).then(() => {
-            trackEvent('engagement', 'page_shared', 'native_share');
-        }).catch(() => {
-            copyCurrentUrl();
+            title: propertyName,
+            text: `Confira este imóvel da Lumiar: ${propertyName}`,
+            url: propertyUrl
         });
     } else {
-        copyCurrentUrl();
+        // Fallback para navegadores sem suporte ao Web Share API
+        const shareText = `Confira este imóvel da Lumiar: ${propertyName} - ${propertyUrl}`;
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+        window.open(whatsappUrl, '_blank');
     }
-};
+}
 
-// Detecção de dispositivo móvel
-const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-if (isMobile) {
-    document.body.classList.add('mobile-device');
+// Service Worker para cache (PWA básico)
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/static/sw.js')
+            .then(function(registration) {
+                console.log('SW registered: ', registration);
+            })
+            .catch(function(registrationError) {
+                console.log('SW registration failed: ', registrationError);
+            });
+    });
 }

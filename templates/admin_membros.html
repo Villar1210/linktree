@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Membros</h2>
+    <a href="{{ url_for('admin.exportar_membros', search=search, tipo=tipo, status=status) }}" class="btn btn-outline-secondary">Exportar CSV</a>
+  </div>
+  <form method="get" class="row g-2 mb-4 align-items-end">
+    <div class="col-md-4">
+      <label class="form-label">Buscar</label>
+      <input type="text" name="search" class="form-control" placeholder="Nome ou email" value="{{ search }}">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Tipo</label>
+      <select name="tipo" class="form-select">
+        <option value="all">Todos</option>
+        {% for tipo_op in UserType %}
+        <option value="{{ tipo_op.value }}" {% if tipo == tipo_op.value %}selected{% endif %}>{{ tipo_op.value|capitalize }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Status</label>
+      <select name="status" class="form-select">
+        <option value="all">Todos</option>
+        {% for st in UserStatus %}
+        <option value="{{ st.value }}" {% if status == st.value %}selected{% endif %}>{{ st.value|capitalize }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+    </div>
+  </form>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+  <table class="table table-bordered table-hover bg-white">
+    <thead class="table-light">
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Email</th>
+        <th>Tipo</th>
+        <th>Status</th>
+        <th>Data Cadastro</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for membro in membros.items %}
+      <tr>
+        <td>{{ membro.id }}</td>
+        <td>{{ membro.nome }}</td>
+        <td>{{ membro.email }}</td>
+        <td>{{ membro.user_type.value|capitalize }}</td>
+        <td>{{ membro.status.value|capitalize }}</td>
+        <td>{{ membro.created_at.strftime('%d/%m/%Y') if membro.created_at else '' }}</td>
+        <td>
+          <a href="{{ url_for('admin.admin_membro_editar', id=membro.id) }}" class="btn btn-sm btn-primary">Editar</a>
+          {% if membro.user_type != UserType.ADMIN %}
+          <form action="{{ url_for('admin.admin_membro_remover', id=membro.id) }}" method="post" style="display:inline-block;" onsubmit="return confirm('Remover membro?');">
+            <button type="submit" class="btn btn-sm btn-danger">Remover</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" class="text-center">Nenhum membro encontrado.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% if membros.pages > 1 %}
+  <nav aria-label="Paginação">
+    <ul class="pagination justify-content-center">
+      <li class="page-item {% if not membros.has_prev %}disabled{% endif %}">
+        <a class="page-link" href="{{ url_for('admin.admin_membros', page=membros.prev_num, search=search, tipo=tipo, status=status) }}">Anterior</a>
+      </li>
+      {% for p in range(1, membros.pages+1) %}
+      <li class="page-item {% if membros.page == p %}active{% endif %}">
+        <a class="page-link" href="{{ url_for('admin.admin_membros', page=p, search=search, tipo=tipo, status=status) }}">{{ p }}</a>
+      </li>
+      {% endfor %}
+      <li class="page-item {% if not membros.has_next %}disabled{% endif %}">
+        <a class="page-link" href="{{ url_for('admin.admin_membros', page=membros.next_num, search=search, tipo=tipo, status=status) }}">Próxima</a>
+      </li>
+    </ul>
+  </nav>
+  {% endif %}
+</div>
+{% endblock %}

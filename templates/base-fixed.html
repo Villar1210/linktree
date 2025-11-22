@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Lumiar - Empreendimentos{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="description" content="Empreendimentos Lumiar - Imóveis de qualidade com localização privilegiada">
+    <meta name="author" content="Construtora Lumiar">
+    <style>
+        /* Mobile Bottom Navigation */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid var(--gray-200);
+            padding: 0.5rem 0;
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.5rem;
+            text-decoration: none;
+            color: var(--gray-600);
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-icon {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .nav-dropdown-mobile {
+            cursor: pointer;
+        }
+
+        .mobile-dropdown-menu {
+            position: absolute;
+            bottom: 100%;
+            right: -1rem;
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 12px 12px 12px 12px;
+            box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.15);
+            min-width: 250px;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1001;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-dropdown-mobile.active .mobile-dropdown-menu {
+            display: block;
+        }
+
+        .mobile-dropdown-header {
+            padding: 1rem;
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .user-greeting {
+            display: block;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .user-type-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .user-type-badge.cliente { background: #dbeafe; color: #1e40af; }
+        .user-type-badge.corretor { background: #dcfce7; color: #166534; }
+        .user-type-badge.imobiliaria { background: #fef3c7; color: #92400e; }
+        .user-type-badge.admin { background: #fce7f3; color: #be185d; }
+
+        .mobile-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--dark-color);
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .mobile-dropdown-item:hover {
+            background: var(--gray-50);
+        }
+
+        .mobile-dropdown-item.small {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .mobile-dropdown-item.logout {
+            color: var(--danger-color);
+        }
+
+        .mobile-dropdown-divider {
+            border: none;
+            height: 1px;
+            background: var(--gray-200);
+            margin: 0;
+        }
+
+        .mobile-dropdown-section {
+            padding: 0.5rem 0;
+        }
+
+        .section-title {
+            display: block;
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            font-weight: 500;
+        }
+
+        /* 💻 DESKTOP - Área do Membro no menu superior */
+        @media (min-width: 769px) {
+            /* Mostrar header completo no desktop */
+            .header {
+                display: block !important;
+            }
+            
+            /* Área do Membro visível no menu superior */
+            .nav-dropdown {
+                display: inline-block !important;
+            }
+            
+            /* Ocultar navegação mobile */
+            .mobile-bottom-nav {
+                display: none !important;
+            }
+            
+            /* Remover padding bottom do desktop */
+            body {
+                padding-bottom: 0;
+            }
+        }
+
+        /* 📱 MOBILE - Área do Membro no rodapé */
+        @media (max-width: 768px) {
+            .logo {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2px;
+            }
+            .logo h1 {
+                margin-bottom: 0;
+                line-height: 1.2;
+            }
+            .logo span {
+                font-size: 0.75rem;
+                line-height: 1;
+                margin-top: -2px;
+            }
+            
+            /* Esconder COMPLETAMENTE o header em mobile */
+            .header {
+                display: none !important;
+            }
+            
+            /* Esconder dropdown do header em mobile */
+            .nav-dropdown {
+                display: none !important;
+            }
+            
+            /* Mostrar navegação inferior com Área do Membro */
+            .mobile-bottom-nav {
+                display: flex !important;
+            }
+            
+            /* Adicionar padding bottom para evitar sobreposição */
+            body {
+                padding-bottom: 80px;
+            }
+            
+            .main {
+                padding-bottom: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>🏗️ Lumiar</h1>
+                    <span>Construindo sonhos</span>
+                </div>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Início</a>
+                    <a href="/empreendimentos" class="nav-link">Empreendimentos</a>
+                    <a href="/contato" class="nav-link">Contato</a>
+                    
+                    <!-- Área do Membro - CORRIGIDO -->
+                    <div class="nav-dropdown">
+                        {% if session.user_id %}
+                            <a href="#" class="nav-link dropdown-toggle" onclick="toggleDropdown(event)">
+                                👤 {{ session.user_name or 'Minha Área' }}
+                            </a>
+                            <div class="dropdown-menu">
+                                <a href="/auth/profile" class="dropdown-item">
+                                    <span class="dropdown-icon">👤</span>
+                                    Meu Perfil
+                                </a>
+                                {% if session.user_type == 'admin' %}
+                                    <a href="/admin/dashboard" class="dropdown-item">
+                                        <span class="dropdown-icon">⚙️</span>
+                                        Painel Admin
+                                    </a>
+                                {% elif session.user_type == 'corretor' %}
+                                    <a href="/corretor/dashboard" class="dropdown-item">
+                                        <span class="dropdown-icon">💼</span>
+                                        Dashboard
+                                    </a>
+                                {% elif session.user_type == 'imobiliaria' %}
+                                    <a href="/imobiliaria/dashboard" class="dropdown-item">
+                                        <span class="dropdown-icon">🏢</span>
+                                        Painel Imobiliária
+                                    </a>
+                                {% elif session.user_type == 'cliente' %}
+                                    <a href="/cliente/dashboard" class="dropdown-item">
+                                        <span class="dropdown-icon">🏠</span>
+                                        Meus Favoritos
+                                    </a>
+                                {% endif %}
+                                <hr class="dropdown-divider">
+                                <a href="/auth/logout" class="dropdown-item logout">
+                                    <span class="dropdown-icon">🚪</span>
+                                    Sair
+                                </a>
+                            </div>
+                        {% else %}
+                            <a href="#" class="nav-link dropdown-toggle" onclick="toggleDropdown(event)">
+                                👤 Área do Membro
+                            </a>
+                            <div class="dropdown-menu">
+                                <a href="/auth/login" class="dropdown-item">
+                                    <span class="dropdown-icon">🔑</span>
+                                    Fazer Login
+                                </a>
+                                <a href="/auth/register" class="dropdown-item">
+                                    <span class="dropdown-icon">📝</span>
+                                    Criar Conta
+                                </a>
+                                <hr class="dropdown-divider">
+                                <div class="dropdown-info">
+                                    <small>Cadastre-se como:</small>
+                                </div>
+                                <a href="/auth/register/cliente" class="dropdown-item small">
+                                    <span class="dropdown-icon">👤</span>
+                                    Cliente
+                                </a>
+                                <a href="/auth/register/corretor" class="dropdown-item small">
+                                    <span class="dropdown-icon">💼</span>
+                                    Corretor
+                                </a>
+                                <a href="/auth/register/imobiliaria" class="dropdown-item small">
+                                    <span class="dropdown-icon">🏢</span>
+                                    Imobiliária
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo principal -->
+    <main class="main">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="container">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>🏗️ Lumiar</h3>
+                    <p>Construindo sonhos e realizando projetos com excelência há mais de 15 anos.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Links Rápidos</h4>
+                    <ul>
+                        <li><a href="/">Início</a></li>
+                        <li><a href="/empreendimentos">Empreendimentos</a></li>
+                        <li><a href="/contato">Contato</a></li>
+                        <li><a href="/sobre">Sobre Nós</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contato</h4>
+                    <p>📞 (11) 4002-8922</p>
+                    <p>✉️ contato@lumiar.com.br</p>
+                    <p>📍 São Paulo - SP</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Redes Sociais</h4>
+                    <div class="social-links">
+                        <a href="#" class="social-link">📘 Facebook</a>
+                        <a href="#" class="social-link">📷 Instagram</a>
+                        <a href="#" class="social-link">💼 LinkedIn</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Construtora Lumiar. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Bottom Navigation -->
+    <div class="mobile-bottom-nav">
+        <a href="/" class="nav-item">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Início</span>
+        </a>
+        <a href="/empreendimentos" class="nav-item">
+            <span class="nav-icon">🏢</span>
+            <span class="nav-label">Imóveis</span>
+        </a>
+        <a href="https://wa.me/5511999887766?text=Olá! Vim do site da Lumiar" target="_blank" class="nav-item">
+            <span class="nav-icon">💬</span>
+            <span class="nav-label">WhatsApp</span>
+        </a>
+        <div class="nav-item nav-dropdown-mobile">
+            <span class="nav-icon">👤</span>
+            <span class="nav-label">Área Membro</span>
+            <div class="mobile-dropdown-menu">
+                {% if session.user_id %}
+                    <div class="mobile-dropdown-header">
+                        <span class="user-greeting">Olá, {{ session.user_name or 'Usuário' }}!</span>
+                        <span class="user-type-badge {{ session.user_type }}">{{ session.user_type.title() if session.user_type }}</span>
+                    </div>
+                    <a href="/auth/profile" class="mobile-dropdown-item">
+                        <span class="dropdown-icon">👤</span>
+                        Meu Perfil
+                    </a>
+                    {% if session.user_type == 'admin' %}
+                        <a href="/admin/dashboard" class="mobile-dropdown-item">
+                            <span class="dropdown-icon">⚙️</span>
+                            Painel Admin
+                        </a>
+                    {% elif session.user_type == 'corretor' %}
+                        <a href="/corretor/dashboard" class="mobile-dropdown-item">
+                            <span class="dropdown-icon">💼</span>
+                            Dashboard
+                        </a>
+                    {% elif session.user_type == 'imobiliaria' %}
+                        <a href="/imobiliaria/dashboard" class="mobile-dropdown-item">
+                            <span class="dropdown-icon">🏢</span>
+                            Painel Imobiliária
+                        </a>
+                    {% elif session.user_type == 'cliente' %}
+                        <a href="/cliente/dashboard" class="mobile-dropdown-item">
+                            <span class="dropdown-icon">🏠</span>
+                            Meus Favoritos
+                        </a>
+                    {% endif %}
+                    <hr class="mobile-dropdown-divider">
+                    <a href="/auth/logout" class="mobile-dropdown-item logout">
+                        <span class="dropdown-icon">🚪</span>
+                        Sair
+                    </a>
+                {% else %}
+                    <div class="mobile-dropdown-header">
+                        <span class="user-greeting">Faça login ou cadastre-se</span>
+                    </div>
+                    <a href="/auth/login" class="mobile-dropdown-item">
+                        <span class="dropdown-icon">🔑</span>
+                        Fazer Login
+                    </a>
+                    <a href="/auth/register" class="mobile-dropdown-item">
+                        <span class="dropdown-icon">📝</span>
+                        Criar Conta
+                    </a>
+                    <hr class="mobile-dropdown-divider">
+                    <div class="mobile-dropdown-section">
+                        <small class="section-title">Cadastre-se como:</small>
+                        <a href="/auth/register/cliente" class="mobile-dropdown-item small">
+                            <span class="dropdown-icon">👤</span>
+                            Cliente
+                        </a>
+                        <a href="/auth/register/corretor" class="mobile-dropdown-item small">
+                            <span class="dropdown-icon">💼</span>
+                            Corretor
+                        </a>
+                        <a href="/auth/register/imobiliaria" class="mobile-dropdown-item small">
+                            <span class="dropdown-icon">🏢</span>
+                            Imobiliária
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript para dropdown móvel -->
+    <script>
+        function toggleDropdown(event) {
+            event.preventDefault();
+            const dropdown = event.target.closest('.nav-dropdown');
+            dropdown.classList.toggle('active');
+            
+            // Fechar outros dropdowns
+            document.querySelectorAll('.nav-dropdown').forEach(item => {
+                if (item !== dropdown) {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        // Fechar dropdown ao clicar fora
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.nav-dropdown')) {
+                document.querySelectorAll('.nav-dropdown').forEach(item => {
+                    item.classList.remove('active');
+                });
+            }
+        });
+
+        // Mobile Bottom Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileDropdown = document.querySelector('.nav-dropdown-mobile');
+            
+            if (mobileDropdown) {
+                mobileDropdown.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    this.classList.toggle('active');
+                    
+                    // Fechar outros dropdowns móveis
+                    document.querySelectorAll('.nav-dropdown-mobile').forEach(item => {
+                        if (item !== this) {
+                            item.classList.remove('active');
+                        }
+                    });
+                });
+            }
+            
+            // Fechar dropdown móvel ao clicar fora
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('.nav-dropdown-mobile')) {
+                    document.querySelectorAll('.nav-dropdown-mobile').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Admin Dashboard - iVillar Platform{% endblock %}
+{% block page_title %}Painel Administrativo{% endblock %}
+
+{% block sidebar_menu %}
+<a href="{{ url_for('admin.dashboard') }}" class="bg-gray-900 text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+    <i data-lucide="layout-dashboard" class="text-gray-300 mr-3 flex-shrink-0 h-5 w-5"></i>
+    Dashboard
+</a>
+<a href="{{ url_for('admin.users') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+    <i data-lucide="users" class="text-gray-400 group-hover:text-gray-300 mr-3 flex-shrink-0 h-5 w-5"></i>
+    Usuários
+</a>
+<a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+    <i data-lucide="home" class="text-gray-400 group-hover:text-gray-300 mr-3 flex-shrink-0 h-5 w-5"></i>
+    Imóveis
+</a>
+<a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+    <i data-lucide="users" class="text-gray-400 group-hover:text-gray-300 mr-3 flex-shrink-0 h-5 w-5"></i>
+    Leads
+</a>
+<a href="{{ url_for('admin.settings') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+    <i data-lucide="settings" class="text-gray-400 group-hover:text-gray-300 mr-3 flex-shrink-0 h-5 w-5"></i>
+    Configurações
+</a>
+<a href="{{ url_for('index') }}" class="text-gray-300 hover:bg-gray-700 hover:text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md mt-4 border-t border-gray-700 pt-4">
+    <i data-lucide="external-link" class="text-gray-400 group-hover:text-gray-300 mr-3 flex-shrink-0 h-5 w-5"></i>
+    Ver Linktree
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Stats Overview -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Total Users -->
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i data-lucide="users" class="h-6 w-6 text-gray-400"></i>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                    <dl>
+                        <dt class="text-sm font-medium text-gray-500 truncate">Total Usuários</dt>
+                        <dd class="text-lg font-medium text-gray-900">{{ stats.total_users }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="bg-gray-50 px-5 py-3">
+            <div class="text-sm">
+                <span class="font-medium text-green-600">{{ stats.usuarios_ativos }}</span> 
+                <span class="text-gray-500">ativos</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clients -->
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i data-lucide="user" class="h-6 w-6 text-blue-400"></i>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                    <dl>
+                        <dt class="text-sm font-medium text-gray-500 truncate">Clientes</dt>
+                        <dd class="text-lg font-medium text-gray-900">{{ stats.clientes }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Realtors -->
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i data-lucide="briefcase" class="h-6 w-6 text-green-400"></i>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                    <dl>
+                        <dt class="text-sm font-medium text-gray-500 truncate">Corretores</dt>
+                        <dd class="text-lg font-medium text-gray-900">{{ stats.corretores }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Properties -->
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i data-lucide="home" class="h-6 w-6 text-purple-400"></i>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                    <dl>
+                        <dt class="text-sm font-medium text-gray-500 truncate">Imóveis</dt>
+                        <dd class="text-lg font-medium text-gray-900">{{ stats.total_properties }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Recent Users -->
+    <div class="bg-white shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Usuários Recentes</h3>
+            <div class="space-y-4">
+                {% for user in recent_users %}
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 h-8 w-8">
+                            <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                                <span class="text-sm font-medium text-gray-700">{{ user.nome[0].upper() }}</span>
+                            </div>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-900">{{ user.nome }}</p>
+                            <p class="text-sm text-gray-500">{{ user.user_type.value }}</p>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        {{ user.created_at.strftime('%d/%m') if user.created_at }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="mt-4">
+                <a href="{{ url_for('admin.users') }}" class="text-primary-600 hover:text-primary-500 text-sm font-medium">
+                    Ver todos →
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Approvals -->
+    <div class="bg-white shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                Aprovações Pendentes 
+                {% if pending_users %}
+                <span class="bg-red-100 text-red-800 text-xs font-medium ml-2 px-2.5 py-0.5 rounded-full">{{ pending_users|length }}</span>
+                {% endif %}
+            </h3>
+            
+            {% if pending_users %}
+            <div class="space-y-4">
+                {% for user in pending_users %}
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 h-8 w-8">
+                            <div class="h-8 w-8 rounded-full bg-yellow-100 flex items-center justify-center">
+                                <span class="text-sm font-medium text-yellow-800">{{ user.nome[0].upper() }}</span>
+                            </div>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-900">{{ user.nome }}</p>
+                            <p class="text-sm text-gray-500">{{ user.user_type.value }}</p>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <form method="POST" action="{{ url_for('admin.approve_user', user_id=user.id) }}" class="inline">
+                            <button type="submit" class="text-green-600 hover:text-green-500 text-sm font-medium">
+                                Aprovar
+                            </button>
+                        </form>
+                        <a href="{{ url_for('admin.user_detail', user_id=user.id) }}" class="text-primary-600 hover:text-primary-500 text-sm font-medium">
+                            Ver
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-sm text-gray-500">Nenhuma aprovação pendente.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+// Auto refresh stats every 30 seconds
+setInterval(function() {
+    fetch('{{ url_for("admin.api_stats") }}')
+        .then(response => response.json())
+        .then(data => {
+            // Update stats if needed
+            console.log('Stats refreshed', data);
+        });
+}, 30000);
+{% endblock %}

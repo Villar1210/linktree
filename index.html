@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Lumiar - Página Inicial{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- User Welcome Section (if logged in) -->
+    {% if user_info %}
+    <section class="user-welcome">
+        <div class="welcome-card">
+            <div class="welcome-content">
+                <h2 class="welcome-title">👋 Olá, {{ user_info.nome }}!</h2>
+                <p class="welcome-subtitle">
+                    {% if user_info.tipo == 'cliente' %}
+                        Encontre o imóvel dos seus sonhos
+                    {% elif user_info.tipo == 'corretor' %}
+                        Gerencie seus leads e vendas
+                    {% elif user_info.tipo == 'imobiliaria' %}
+                        Administre sua equipe e portfólio
+                    {% elif user_info.tipo == 'admin' %}
+                        Controle total da plataforma
+                    {% endif %}
+                </p>
+            </div>
+            <div class="welcome-actions">
+                {% if user_info.tipo == 'admin' %}
+                    <a href="{{ url_for('admin.dashboard') }}" class="btn-dashboard">
+                        <span class="btn-icon">⚙️</span>
+                        Painel Admin
+                    </a>
+                {% elif user_info.tipo == 'corretor' %}
+                    <a href="{{ url_for('corretor.dashboard') }}" class="btn-dashboard">
+                        <span class="btn-icon">💼</span>
+                        Meu Dashboard
+                    </a>
+                {% elif user_info.tipo == 'imobiliaria' %}
+                    <a href="{{ url_for('imobiliaria.dashboard') }}" class="btn-dashboard">
+                        <span class="btn-icon">🏢</span>
+                        Painel Imobiliária
+                    </a>
+                {% elif user_info.tipo == 'cliente' %}
+                    <a href="{{ url_for('cliente.dashboard') }}" class="btn-dashboard">
+                        <span class="btn-icon">🏠</span>
+                        Meus Favoritos
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">🏗️ Construtora Lumiar</h1>
+            <p class="hero-subtitle">
+                {% if user_info %}
+                    Seja bem-vindo(a) de volta! Confira nossos empreendimentos exclusivos.
+                {% else %}
+                    Empreendimentos de qualidade em localização privilegiada
+                {% endif %}
+            </p>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number">{{ dados.empreendimentos|length }}</span>
+                    <span class="stat-label">Empreendimentos</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">15+</span>
+                    <span class="stat-label">Anos no Mercado</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">500+</span>
+                    <span class="stat-label">Famílias Atendidas</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Actions -->
+    <section class="main-actions">
+        <div class="actions-grid">
+            <!-- Empreendimentos Disponíveis -->
+            <a href="/empreendimentos" class="action-card primary">
+                <div class="card-icon">🏠</div>
+                <h3>Empreendimentos Disponíveis</h3>
+                <p>Veja todos os nossos lançamentos e imóveis prontos</p>
+                <span class="card-count">{{ dados.empreendimentos|length }} disponíveis</span>
+            </a>
+
+            <!-- Obras em Andamento -->
+            <a href="/empreendimentos?status=obras" class="action-card secondary">
+                <div class="card-icon">🚧</div>
+                <h3>Obras em Andamento</h3>
+                <p>Acompanhe o progresso dos nossos projetos</p>
+                <span class="card-status">Em construção</span>
+            </a>
+
+            <!-- Campanhas Relâmpago -->
+            <a href="/campanhas" class="action-card highlight">
+                <div class="card-icon">⚡</div>
+                <h3>Campanhas Relâmpago</h3>
+                <p>Ofertas especiais por tempo limitado</p>
+                <span class="card-offer">Até 15% OFF</span>
+            </a>
+
+            <!-- Vagas para Corretores -->
+            <a href="/vagas" class="action-card success">
+                <div class="card-icon">💼</div>
+                <h3>Vagas para Corretores</h3>
+                <p>Junte-se à nossa equipe de vendas</p>
+                <span class="card-badge">Oportunidade</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- WhatsApp Contact -->
+    <section class="whatsapp-section">
+        <div class="whatsapp-card">
+            <div class="whatsapp-content">
+                <div class="whatsapp-icon">💬</div>
+                <div class="whatsapp-text">
+                    <h3>Fale com Daniel</h3>
+                    <p>Gerente Comercial - Tire suas dúvidas diretamente comigo!</p>
+                </div>
+            </div>
+            <a href="{{ WHATSAPP_DANIEL|whatsapp_link('Olá Daniel! Vim do site da Lumiar e gostaria de mais informações sobre os empreendimentos.') }}" 
+               target="_blank" 
+               class="whatsapp-button">
+                Conversar no WhatsApp
+            </a>
+        </div>
+    </section>
+
+    <!-- Quick Contact -->
+    <section class="quick-contact">
+        <h2>Contato Rápido</h2>
+        <div class="contact-grid">
+            <a href="{{ WHATSAPP_VENDAS|whatsapp_link('Olá! Gostaria de informações sobre apartamentos.') }}" 
+               target="_blank" 
+               class="contact-item">
+                <span class="contact-icon">🏠</span>
+                <span>Apartamentos</span>
+            </a>
+            <a href="{{ WHATSAPP_VENDAS|whatsapp_link('Olá! Tenho interesse em casas.') }}" 
+               target="_blank" 
+               class="contact-item">
+                <span class="contact-icon">🏘️</span>
+                <span>Casas</span>
+            </a>
+            <a href="{{ WHATSAPP_VENDAS|whatsapp_link('Olá! Quero saber sobre coberturas.') }}" 
+               target="_blank" 
+               class="contact-item">
+                <span class="contact-icon">🏢</span>
+                <span>Coberturas</span>
+            </a>
+            <a href="{{ WHATSAPP_DANIEL|whatsapp_link('Olá Daniel! Gostaria de trabalhar como corretor na Lumiar.') }}" 
+               target="_blank" 
+               class="contact-item">
+                <span class="contact-icon">💼</span>
+                <span>Seja Corretor</span>
+            </a>
+        </div>
+    </section>
+</div>
+{% endblock %}

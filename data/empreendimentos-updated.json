@@ -1,0 +1,187 @@
+{
+  "empreendimentos": [
+    {
+      "id": 1,
+      "nome": "Residencial Suzano Gardens",
+      "tipo": "Apartamento",
+      "status": "Lançamento",
+      "preco": "R$ 320.000",
+      "localizacao": "Suzano, SP",
+      "quartos": 2,
+      "banheiros": 2,
+      "area": "58m²",
+      "imagem": "/static/images/suzano-parque.jpg",
+      "descricao": "Moderno residencial em Suzano com área de lazer completa e fácil acesso ao transporte público",
+      "whatsapp_message": "Olá! Gostaria de saber mais sobre o Residencial Suzano Parque. Vi no site da Lumiar.",
+      "diferenciais": ["Área de lazer", "Próximo ao metrô", "Varanda gourmet", "Portaria 24h"]
+    },
+    {
+      "id": 2,
+      "nome": "Mogi das Cruzes Residencial",
+      "tipo": "Casa",
+      "status": "Disponível",
+      "preco": "R$ 450.000",
+      "localizacao": "Mogi das Cruzes, SP",
+      "quartos": 3,
+      "banheiros": 2,
+      "area": "120m²",
+      "imagem": "/static/images/mogi-flores.jpg",
+      "descricao": "Casa térrea em condomínio fechado com jardim privativo e área gourmet",
+      "whatsapp_message": "Olá! Tenho interesse na Vila das Flores Mogi que vi no site da Lumiar.",
+      "diferenciais": ["Jardim privativo", "Área gourmet", "Condomínio fechado", "2 vagas de garagem"]
+    },
+    {
+      "id": 3,
+      "nome": "Suzano Metropolitan",
+      "tipo": "Apartamento",
+      "status": "Em Obras",
+      "preco": "R$ 280.000",
+      "localizacao": "Centro, Suzano, SP",
+      "quartos": 2,
+      "banheiros": 1,
+      "area": "50m²",
+      "imagem": "/static/images/suzano-center.jpg",
+      "descricao": "Apartamentos no centro de Suzano com fácil acesso a comércios e serviços",
+      "whatsapp_message": "Olá! Quero mais informações sobre o Edifício Suzano Center.",
+      "diferenciais": ["Centro da cidade", "Comércio próximo", "Transporte público", "Entrega 2025"]
+    },
+    {
+      "id": 4,
+      "nome": "Residencial Mogi Premium",
+      "tipo": "Apartamento",
+      "status": "Disponível",
+      "preco": "R$ 380.000",
+      "localizacao": "Vila Oliveira, Mogi das Cruzes, SP",
+      "quartos": 2,
+      "banheiros": 2,
+      "area": "62m²",
+      "imagem": "/static/images/mogi-premium.jpg",
+      "descricao": "Apartamento com acabamento superior e vista privilegiada da Serra do Itapety",
+      "whatsapp_message": "Olá! Gostaria de visitar o Residencial Mogi Premium.",
+      "diferenciais": ["Vista da serra", "Acabamento premium", "Sacada ampla", "Academia no prédio"]
+    },
+    {
+      "id": 5,
+      "nome": "Condomínio Suzano Ville",
+      "tipo": "Casa",
+      "status": "Lançamento",
+      "preco": "R$ 520.000",
+      "localizacao": "Jardim Ikeda, Suzano, SP",
+      "quartos": 3,
+      "banheiros": 3,
+      "area": "150m²",
+      "imagem": "/static/images/suzano-ville.jpg",
+      "descricao": "Casas em condomínio com clube, piscina e quadras esportivas",
+      "whatsapp_message": "Olá! Tenho interesse no Condomínio Suzano Ville que vi no site.",
+      "diferenciais": ["Clube completo", "Piscina", "Quadras esportivas", "Área verde"]
+    },
+    {
+      "id": 6,
+      "nome": "Residencial Mogi Hills",
+      "tipo": "Casa",
+      "status": "Disponível", 
+      "preco": "R$ 650.000",
+      "localizacao": "Parque Residencial Itapeti, Mogi das Cruzes, SP",
+      "quartos": 4,
+      "banheiros": 3,
+      "area": "180m²",
+      "imagem": "/static/images/mogi-hills.jpg",
+      "descricao": "Casa de alto padrão com vista panorâmica e área de lazer privativa",
+      "whatsapp_message": "Olá! Quero conhecer o Residencial Mogi Hills.",
+      "diferenciais": ["Vista panorâmica", "Área de lazer privativa", "4 suítes", "Churrasqueira"]
+    }
+  ],
+  "campanhas": [
+    {
+      "titulo": "🚀 CAMPANHA SUZANO & MOGI",
+      "subtitulo": "Condições especiais para região metropolitana!",
+      "desconto": "10% OFF + Documentação Grátis",
+      "prazo": "Válido até 31/03/2025",
+      "empreendimentos": [1, 2, 3, 4],
+      "condicoes": [
+        "Válido para Suzano e Mogi das Cruzes",
+        "Entrada facilitada a partir de 20%",
+        "Documentação sem custo",
+        "FGTS aceito como entrada"
+      ]
+    },
+    {
+      "titulo": "💎 LANÇAMENTO SUZANO VILLE",
+      "subtitulo": "Primeiros compradores ganham benefícios exclusivos",
+      "desconto": "Entrada de 15% + Brinde",
+      "prazo": "Primeiras 15 unidades",
+      "empreendimentos": [5],
+      "condicoes": [
+        "Entrada facilitada de apenas 15%",
+        "Brinde: Projeto paisagístico",
+        "Taxa de condomínio grátis por 6 meses",
+        "Financiamento até 35 anos"
+      ]
+    },
+    {
+      "titulo": "🏠 PRONTO PARA MORAR",
+      "subtitulo": "Imóveis prontos com chaves na mão",
+      "desconto": "Condição especial",
+      "prazo": "Oportunidade única",
+      "empreendimentos": [2, 4, 6],
+      "condicoes": [
+        "Imóveis prontos para morar",
+        "Chaves imediatas",
+        "Financiamento aprovado em 48h",
+        "Sem taxa de corretagem"
+      ]
+    }
+  ],
+  "vagas": [
+    {
+      "cargo": "Corretor Suzano e Mogi",
+      "tipo": "Presencial/Regional",
+      "salario": "R$ 2.500 + comissões",
+      "regiao": "Suzano e Mogi das Cruzes",
+      "requisitos": [
+        "Conhecimento da região",
+        "CRECI ativo",
+        "Veículo próprio",
+        "Experiência em vendas"
+      ],
+      "beneficios": [
+        "Comissão até 3,5%",
+        "Ajuda de custo combustível",
+        "Leads qualificados da região",
+        "Treinamento especializado"
+      ],
+      "contato": "Fale com Daniel para mais informações"
+    },
+    {
+      "cargo": "Coordenador Regional",
+      "tipo": "Presencial",
+      "salario": "R$ 4.000 + participação",
+      "regiao": "Grande São Paulo Leste",
+      "requisitos": [
+        "Experiência em coordenação",
+        "Conhecimento Suzano/Mogi/região",
+        "Liderança de equipe",
+        "CRECI ativo"
+      ],
+      "beneficios": [
+        "Participação nos resultados",
+        "Carro da empresa",
+        "Plano de saúde",
+        "Equipe dedicada"
+      ],
+      "contato": "Fale com Daniel para mais informações"
+    }
+  ],
+  "configuracoes": {
+    "whatsapp_daniel": "5511999887766",
+    "whatsapp_vendas": "5511999776655",
+    "whatsapp_suzano": "5511999665544",
+    "whatsapp_mogi": "5511999554433",
+    "email": "contato@lumiar.com.br",
+    "telefone": "(11) 99988-7766",
+    "endereco_matriz": "Av. Paulista, 1000 - São Paulo, SP",
+    "endereco_suzano": "Rua Baruel, 500 - Centro, Suzano, SP",
+    "endereco_mogi": "Av. Francisco Ferreira Lopes, 1200 - Centro, Mogi das Cruzes, SP",
+    "horario_funcionamento": "Segunda a Sexta: 8h às 18h | Sábado: 8h às 16h"
+  }
+}

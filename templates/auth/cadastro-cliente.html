@@ -1,0 +1,883 @@
+{% extends "base.html" %}
+
+{% block title %}Cadastro de Cliente - Lumiar{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Auth Container */
+    .auth-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+    }
+
+    .auth-wrapper {
+        width: 100%;
+        max-width: 1200px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .auth-wrapper.register {
+        grid-template-columns: 1fr 1.2fr;
+    }
+
+    /* Auth Image Section */
+    .auth-image {
+        background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+        color: white;
+        padding: 3rem 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .auth-image::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="80" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="30" r="1.5" fill="rgba(255,255,255,0.15)"/></svg>') repeat;
+        background-size: 60px 60px;
+        animation: float 25s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-15px) rotate(3deg); }
+    }
+
+    .auth-image-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .auth-image h2 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .auth-image p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+
+    .benefits-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .benefit-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 0.5rem;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .benefit-item:hover {
+        transform: translateX(5px);
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    .benefit-item i {
+        color: #fbbf24;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .benefit-item span {
+        font-weight: 500;
+    }
+
+    /* Auth Card */
+    .auth-card {
+        padding: 3rem 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .auth-logo {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #3b82f6, #1e40af);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .auth-logo i {
+        font-size: 2rem;
+        color: white;
+    }
+
+    .auth-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+    }
+
+    .auth-header p {
+        color: #6b7280;
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    /* Form Styles */
+    .auth-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .form-group label i {
+        color: #3b82f6;
+        width: 16px;
+        text-align: center;
+    }
+
+    .form-control {
+        padding: 0.75rem 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 0.5rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background: #f9fafb;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #3b82f6;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-control:hover {
+        border-color: #9ca3af;
+    }
+
+    .form-control::placeholder {
+        color: #9ca3af;
+    }
+
+    /* Form Divider */
+    .form-divider {
+        border: none;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
+        margin: 1rem 0;
+    }
+
+    /* Buttons */
+    .btn {
+        padding: 0.875rem 2rem;
+        border: none;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #3b82f6, #1e40af);
+        color: white;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-primary:active {
+        transform: translateY(0);
+    }
+
+    .btn-block {
+        width: 100%;
+    }
+
+    /* Auth Footer */
+    .auth-footer {
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .auth-footer p {
+        color: #6b7280;
+        margin: 0;
+    }
+
+    .auth-footer a {
+        color: #3b82f6;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+    }
+
+    .auth-footer a:hover {
+        color: #1e40af;
+        text-decoration: underline;
+    }
+
+    /* Alert Styles */
+    .alert {
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        border: 1px solid transparent;
+    }
+
+    .alert-success {
+        background: #dcfce7;
+        color: #166534;
+        border-color: #bbf7d0;
+    }
+
+    .alert-danger {
+        background: #fee2e2;
+        color: #991b1b;
+        border-color: #fecaca;
+    }
+
+    .alert-warning {
+        background: #fef3c7;
+        color: #92400e;
+        border-color: #fde68a;
+    }
+
+    /* Input Validation */
+    .form-control.is-valid {
+        border-color: #10b981;
+        background: #f0fdf4;
+    }
+
+    .form-control.is-invalid {
+        border-color: #ef4444;
+        background: #fef2f2;
+    }
+
+    .invalid-feedback {
+        color: #ef4444;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+    .valid-feedback {
+        color: #10b981;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+    /* Loading States */
+    .btn.loading {
+        pointer-events: none;
+        opacity: 0.7;
+    }
+
+    .btn.loading::after {
+        content: '';
+        width: 16px;
+        height: 16px;
+        border: 2px solid transparent;
+        border-top: 2px solid currentColor;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-left: 0.5rem;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .auth-container {
+            padding: 1rem;
+            align-items: flex-start;
+            padding-top: 2rem;
+        }
+
+        .auth-wrapper.register {
+            grid-template-columns: 1fr;
+        }
+
+        .auth-image {
+            padding: 2rem 1.5rem;
+            order: 2;
+        }
+
+        .auth-image h2 {
+            font-size: 2rem;
+        }
+
+        .auth-card {
+            padding: 2rem 1.5rem;
+            order: 1;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .auth-header h1 {
+            font-size: 1.75rem;
+        }
+
+        .benefit-item {
+            padding: 0.75rem;
+        }
+
+        .benefits-list {
+            gap: 0.75rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .auth-container {
+            padding: 0.5rem;
+            padding-top: 1rem;
+        }
+
+        .auth-wrapper {
+            border-radius: 0.75rem;
+        }
+
+        .auth-card {
+            padding: 1.5rem 1rem;
+        }
+
+        .auth-image {
+            padding: 1.5rem 1rem;
+        }
+
+        .auth-logo {
+            width: 60px;
+            height: 60px;
+        }
+
+        .auth-logo i {
+            font-size: 1.5rem;
+        }
+
+        .auth-header h1 {
+            font-size: 1.5rem;
+        }
+
+        .form-control {
+            padding: 0.625rem 0.875rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+        }
+    }
+
+    /* Print Styles */
+    @media print {
+        .auth-container {
+            background: white;
+            box-shadow: none;
+        }
+        
+        .auth-image {
+            display: none;
+        }
+        
+        .auth-wrapper.register {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Dark Mode Support */
+    @media (prefers-color-scheme: dark) {
+        .auth-wrapper {
+            background: #1f2937;
+            color: white;
+        }
+        
+        .auth-header h1 {
+            color: white;
+        }
+        
+        .form-control {
+            background: #374151;
+            border-color: #4b5563;
+            color: white;
+        }
+        
+        .form-control:focus {
+            background: #4b5563;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-wrapper register">
+        <div class="auth-image">
+            <div class="auth-image-content">
+                <h2>Encontre o Imóvel dos Seus Sonhos</h2>
+                <p>Cadastre-se e deixe nossos corretores entrarem em contato com você. Temos as melhores ofertas da região!</p>
+                <div class="benefits-list">
+                    <div class="benefit-item">
+                        <i class="fas fa-star"></i>
+                        <span>Acesso a todos os empreendimentos</span>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-headset"></i>
+                        <span>Atendimento personalizado</span>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Financiamento facilitado</span>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-gift"></i>
+                        <span>Ofertas exclusivas</span>
+                    </div>
+                    <div class="benefit-item">
+                        <i class="fas fa-clock"></i>
+                        <span>Acompanhamento em tempo real</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <h1>Sou um Cliente</h1>
+                <p>Procurando um imóvel? Cadastre-se agora e receba ofertas personalizadas</p>
+            </div>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" class="auth-form" id="clienteForm">
+                <!-- Dados Pessoais -->
+                <div class="form-group">
+                    <label for="nome">
+                        <i class="fas fa-user"></i> Nome Completo *
+                    </label>
+                    <input 
+                        type="text" 
+                        id="nome" 
+                        name="nome" 
+                        class="form-control" 
+                        placeholder="Seu nome completo" 
+                        value="{{ request.form.nome if request.form.nome }}"
+                        required
+                        minlength="3"
+                        maxlength="120"
+                    >
+                    <div class="invalid-feedback"></div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i> Email *
+                        </label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            class="form-control" 
+                            placeholder="seu@email.com" 
+                            value="{{ request.form.email if request.form.email }}"
+                            required
+                        >
+                        <div class="invalid-feedback"></div>
+                        <div class="valid-feedback">Email disponível!</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefone">
+                            <i class="fas fa-phone"></i> Telefone *
+                        </label>
+                        <input 
+                            type="tel" 
+                            id="telefone" 
+                            name="telefone" 
+                            class="form-control" 
+                            placeholder="(11) 99999-9999" 
+                            value="{{ request.form.telefone if request.form.telefone }}"
+                            required
+                        >
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="cpf">
+                        <i class="fas fa-id-card"></i> CPF (Opcional)
+                    </label>
+                    <input 
+                        type="text" 
+                        id="cpf" 
+                        name="cpf" 
+                        class="form-control" 
+                        placeholder="000.000.000-00"
+                        value="{{ request.form.cpf if request.form.cpf }}"
+                        maxlength="14"
+                    >
+                    <div class="invalid-feedback"></div>
+                    <small style="color: #6b7280; font-size: 0.85rem;">O CPF nos ajuda a personalizar ainda mais o atendimento</small>
+                </div>
+
+                <hr class="form-divider">
+
+                <h4 style="margin-bottom: 1rem; color: #374151; font-size: 1.1rem;">
+                    <i class="fas fa-search" style="color: #3b82f6; margin-right: 0.5rem;"></i>
+                    Preferências de Busca (Opcional)
+                </h4>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="interesse_tipo">
+                            <i class="fas fa-home"></i> Tipo de Imóvel
+                        </label>
+                        <select id="interesse_tipo" name="interesse_tipo" class="form-control">
+                            <option value="">Selecione o tipo...</option>
+                            {% if tipos_imovel %}
+                                {% for tipo in tipos_imovel %}
+                                    <option value="{{ tipo }}" {% if request.form.interesse_tipo == tipo %}selected{% endif %}>
+                                        {{ tipo }}
+                                    </option>
+                                {% endfor %}
+                            {% else %}
+                                <option value="Apartamento">Apartamento</option>
+                                <option value="Casa">Casa</option>
+                                <option value="Cobertura">Cobertura</option>
+                                <option value="Terreno">Terreno</option>
+                                <option value="Comercial">Comercial</option>
+                                <option value="Todos">Todos os tipos</option>
+                            {% endif %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="interesse_regiao">
+                            <i class="fas fa-map-marker-alt"></i> Região de Interesse
+                        </label>
+                        <select id="interesse_regiao" name="interesse_regiao" class="form-control">
+                            <option value="">Selecione a região...</option>
+                            {% if regioes %}
+                                {% for regiao in regioes %}
+                                    <option value="{{ regiao }}" {% if request.form.interesse_regiao == regiao %}selected{% endif %}>
+                                        {{ regiao }}
+                                    </option>
+                                {% endfor %}
+                            {% else %}
+                                <option value="Zona Leste">Zona Leste</option>
+                                <option value="Zona Sul">Zona Sul</option>
+                                <option value="Zona Norte">Zona Norte</option>
+                                <option value="Zona Oeste">Zona Oeste</option>
+                                <option value="Centro">Centro</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="faixa_preco_min">
+                            <i class="fas fa-dollar-sign"></i> Preço Mínimo (R$)
+                        </label>
+                        <input 
+                            type="number" 
+                            id="faixa_preco_min" 
+                            name="faixa_preco_min" 
+                            class="form-control" 
+                            placeholder="200.000"
+                            value="{{ request.form.faixa_preco_min if request.form.faixa_preco_min }}"
+                            min="0"
+                            step="1000"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="faixa_preco_max">
+                            <i class="fas fa-dollar-sign"></i> Preço Máximo (R$)
+                        </label>
+                        <input 
+                            type="number" 
+                            id="faixa_preco_max" 
+                            name="faixa_preco_max" 
+                            class="form-control" 
+                            placeholder="800.000"
+                            value="{{ request.form.faixa_preco_max if request.form.faixa_preco_max }}"
+                            min="0"
+                            step="1000"
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="observacoes">
+                        <i class="fas fa-comment"></i> Observações Adicionais
+                    </label>
+                    <textarea 
+                        id="observacoes" 
+                        name="observacoes" 
+                        class="form-control" 
+                        rows="3"
+                        placeholder="Conte-nos mais sobre suas preferências, necessidades especiais, etc."
+                        maxlength="500"
+                    >{{ request.form.observacoes if request.form.observacoes }}</textarea>
+                    <small style="color: #6b7280; font-size: 0.85rem;">Máximo 500 caracteres</small>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" id="submitBtn">
+                    <i class="fas fa-check"></i> Cadastrar como Cliente
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Já tem cadastro? <a href="{{ url_for('auth_signin') if url_for else '/auth/signin' }}">Faça login aqui</a></p>
+                <p style="margin-top: 0.5rem; font-size: 0.85rem;">
+                    Ou explore nossos <a href="{{ url_for('index') if url_for else '/' }}">empreendimentos</a> sem cadastro
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('clienteForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const emailInput = document.getElementById('email');
+    const cpfInput = document.getElementById('cpf');
+    const telefoneInput = document.getElementById('telefone');
+
+    // Máscaras de input
+    if (cpfInput) {
+        cpfInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            e.target.value = value;
+        });
+    }
+
+    if (telefoneInput) {
+        telefoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 10) {
+                value = value.replace(/(\d{2})(\d)/, '($1) $2');
+                value = value.replace(/(\d{4})(\d)/, '$1-$2');
+            } else {
+                value = value.replace(/(\d{2})(\d)/, '($1) $2');
+                value = value.replace(/(\d{5})(\d)/, '$1-$2');
+            }
+            e.target.value = value;
+        });
+    }
+
+    // Validação de email em tempo real
+    if (emailInput) {
+        let emailTimeout;
+        emailInput.addEventListener('input', function() {
+            clearTimeout(emailTimeout);
+            emailTimeout = setTimeout(checkEmail, 500);
+        });
+    }
+
+    function checkEmail() {
+        const email = emailInput.value.trim();
+        if (email && isValidEmail(email)) {
+            fetch('/api/verificar-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({email: email})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.disponivel) {
+                    emailInput.classList.remove('is-invalid');
+                    emailInput.classList.add('is-valid');
+                } else {
+                    emailInput.classList.remove('is-valid');
+                    emailInput.classList.add('is-invalid');
+                    emailInput.parentElement.querySelector('.invalid-feedback').textContent = data.motivo;
+                }
+            })
+            .catch(error => {
+                console.log('Erro na verificação:', error);
+            });
+        }
+    }
+
+    // Validação de CPF em tempo real
+    if (cpfInput) {
+        cpfInput.addEventListener('blur', function() {
+            const cpf = this.value.replace(/\D/g, '');
+            if (cpf && cpf.length === 11) {
+                fetch('/api/verificar-cpf', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({cpf: cpf})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.disponivel) {
+                        cpfInput.classList.remove('is-invalid');
+                        cpfInput.classList.add('is-valid');
+                    } else {
+                        cpfInput.classList.remove('is-valid');
+                        cpfInput.classList.add('is-invalid');
+                        cpfInput.parentElement.querySelector('.invalid-feedback').textContent = data.motivo;
+                    }
+                });
+            }
+        });
+    }
+
+    // Validação de faixa de preços
+    const precoMin = document.getElementById('faixa_preco_min');
+    const precoMax = document.getElementById('faixa_preco_max');
+
+    function validatePriceRange() {
+        const min = parseFloat(precoMin.value) || 0;
+        const max = parseFloat(precoMax.value) || 0;
+        
+        if (min > 0 && max > 0 && min > max) {
+            precoMin.classList.add('is-invalid');
+            precoMax.classList.add('is-invalid');
+            precoMin.parentElement.querySelector('.invalid-feedback').textContent = 'O preço mínimo não pode ser maior que o máximo';
+        } else {
+            precoMin.classList.remove('is-invalid');
+            precoMax.classList.remove('is-invalid');
+        }
+    }
+
+    if (precoMin && precoMax) {
+        precoMin.addEventListener('blur', validatePriceRange);
+        precoMax.addEventListener('blur', validatePriceRange);
+    }
+
+    // Submit do formulário
+    form.addEventListener('submit', function(e) {
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+        
+        // Remover loading após 10 segundos (fallback)
+        setTimeout(function() {
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+        }, 10000);
+    });
+
+    // Função auxiliar para validar email
+    function isValidEmail(email) {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
+    }
+
+    // Contador de caracteres para observações
+    const observacoes = document.getElementById('observacoes');
+    if (observacoes) {
+        const maxLength = 500;
+        const counter = document.createElement('small');
+        counter.style.color = '#6b7280';
+        counter.style.fontSize = '0.85rem';
+        counter.style.display = 'block';
+        counter.style.textAlign = 'right';
+        counter.style.marginTop = '0.25rem';
+        
+        observacoes.parentElement.appendChild(counter);
+        
+        function updateCounter() {
+            const remaining = maxLength - observacoes.value.length;
+            counter.textContent = `${remaining} caracteres restantes`;
+            if (remaining < 50) {
+                counter.style.color = '#ef4444';
+            } else {
+                counter.style.color = '#6b7280';
+            }
+        }
+        
+        observacoes.addEventListener('input', updateCounter);
+        updateCounter();
+    }
+});
+</script>
+{% endblock %}

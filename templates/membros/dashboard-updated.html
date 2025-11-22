@@ -1,0 +1,685 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Lumiar{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-container {
+        padding: 2rem 0;
+        background: #f8fafc;
+        min-height: calc(100vh - 80px);
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+
+    /* Welcome Section */
+    .welcome-section {
+        margin-bottom: 2rem;
+    }
+
+    .welcome-card {
+        background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 10px 25px -5px rgba(30, 64, 175, 0.3);
+    }
+
+    .welcome-content h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .welcome-content p {
+        opacity: 0.9;
+        font-size: 1rem;
+    }
+
+    .welcome-actions {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+
+    .btn-primary {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-primary:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-1px);
+    }
+
+    .btn-outline {
+        background: transparent;
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .btn-outline:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-1px);
+    }
+
+    /* Stats Section */
+    .stats-section {
+        margin-bottom: 2rem;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e5e7eb;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, #1e40af, #3b82f6);
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .stat-icon i {
+        color: white;
+        font-size: 1.25rem;
+    }
+
+    .stat-content h3 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-content p {
+        color: #6b7280;
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    /* Section Headers */
+    .section-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .section-header h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1f2937;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .section-header h2 i {
+        color: #1e40af;
+    }
+
+    /* Activity Section */
+    .activity-section {
+        margin-bottom: 2rem;
+    }
+
+    .activity-list {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #f3f4f6;
+        transition: background 0.3s ease;
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-item:hover {
+        background: #f9fafb;
+    }
+
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        background: #f3f4f6;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+    }
+
+    .activity-content {
+        flex: 1;
+    }
+
+    .activity-content h4 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 0.25rem;
+        text-transform: capitalize;
+    }
+
+    .activity-content p {
+        color: #6b7280;
+        font-size: 0.875rem;
+        margin: 0;
+    }
+
+    .activity-date {
+        text-align: right;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .activity-date small {
+        font-size: 0.75rem;
+        color: #9ca3af;
+    }
+
+    .activity-date .ip {
+        font-family: 'Courier New', monospace;
+        background: #f3f4f6;
+        padding: 0.125rem 0.25rem;
+        border-radius: 0.25rem;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e5e7eb;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        color: #d1d5db;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+        color: #6b7280;
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+        margin-bottom: 2rem;
+    }
+
+    .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .action-card {
+        background: white;
+        padding: 2rem 1.5rem;
+        border-radius: 1rem;
+        text-decoration: none;
+        color: inherit;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e5e7eb;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .action-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .action-card i {
+        font-size: 2.5rem;
+        color: #1e40af;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .action-card h3 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+    }
+
+    .action-card p {
+        color: #6b7280;
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    /* Status Badges */
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .status-active {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .status-inactive {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    /* Loading States */
+    .loading {
+        color: #6b7280;
+        font-style: italic;
+    }
+
+    .loading::after {
+        content: "...";
+        animation: dots 1.5s steps(5, end) infinite;
+    }
+
+    @keyframes dots {
+        0%, 20% { color: rgba(0,0,0,0); text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0); }
+        40% { color: #6b7280; text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0); }
+        60% { text-shadow: .25em 0 0 #6b7280, .5em 0 0 rgba(0,0,0,0); }
+        80%, 100% { text-shadow: .25em 0 0 #6b7280, .5em 0 0 #6b7280; }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .dashboard-container {
+            padding: 1rem 0;
+            min-height: calc(100vh - 160px); /* Account for mobile nav */
+        }
+
+        .container {
+            padding: 0 0.5rem;
+        }
+
+        .welcome-card {
+            flex-direction: column;
+            text-align: center;
+            gap: 1.5rem;
+            padding: 1.5rem;
+        }
+
+        .welcome-content h1 {
+            font-size: 1.5rem;
+        }
+
+        .welcome-actions {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .welcome-actions .btn {
+            justify-content: center;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stat-card {
+            padding: 1rem;
+        }
+
+        .activity-item {
+            padding: 0.75rem 1rem;
+        }
+
+        .activity-date {
+            display: none; /* Hide on very small screens */
+        }
+
+        .actions-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .action-card {
+            padding: 1.5rem 1rem;
+        }
+
+        .action-card i {
+            font-size: 2rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.25rem;
+        }
+    }
+
+    /* Very small screens */
+    @media (max-width: 480px) {
+        .actions-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stats-grid {
+            gap: 1rem;
+        }
+
+        .stat-card {
+            flex-direction: column;
+            text-align: center;
+            gap: 0.75rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="container">
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+            <div class="welcome-card">
+                <div class="welcome-content">
+                    <h1>Bem-vindo, {{ current_user.nome }}! 👋</h1>
+                    <p>Seu último acesso foi em <strong>{{ current_user.ultimo_acesso.strftime('%d/%m/%Y às %H:%M') if current_user.ultimo_acesso else 'Primeira vez' }}</strong></p>
+                    {% if current_user.cargo %}
+                        <p><span class="status-badge status-active">{{ current_user.cargo }}</span></p>
+                    {% endif %}
+                </div>
+                <div class="welcome-actions">
+                    <a href="/membros/redes-sociais" class="btn btn-primary">
+                        <i class="fas fa-share-alt"></i> Gerenciar Redes
+                    </a>
+                    <a href="/membros/seguranca" class="btn btn-outline">
+                        <i class="fas fa-shield-alt"></i> Segurança
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Meu Perfil</h3>
+                        <p>{{ current_user.email }}</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Redes Sociais</h3>
+                        <p id="redes-count" class="loading">Carregando</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Total de Acessos</h3>
+                        <p>{{ total_acessos }} acessos</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Membro Desde</h3>
+                        <p>{{ current_user.data_criacao.strftime('%d/%m/%Y') }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Admin Quick Access -->
+        {% if current_user.cargo == 'Administrador' %}
+        <section class="admin-section" style="margin-bottom: 2rem;">
+            <div class="section-header">
+                <h2><i class="fas fa-crown" style="color: #f59e0b;"></i> Acesso Administrativo</h2>
+            </div>
+            <div class="welcome-card" style="background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);">
+                <div class="welcome-content">
+                    <h1 style="font-size: 1.5rem;">🛠️ Painel de Administração</h1>
+                    <p>Gerencie usuários, configurações e muito mais</p>
+                </div>
+                <div class="welcome-actions">
+                    <a href="/admin/dashboard" class="btn btn-primary">
+                        <i class="fas fa-cog"></i> Painel Admin
+                    </a>
+                    <a href="/admin/membros" class="btn btn-outline">
+                        <i class="fas fa-users"></i> Gerenciar Membros
+                    </a>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Recent Activity -->
+        <section class="activity-section">
+            <div class="section-header">
+                <h2><i class="fas fa-history"></i> Acessos Recentes</h2>
+            </div>
+
+            {% if acessos_recentes %}
+                <div class="activity-list">
+                    {% for acesso in acessos_recentes %}
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                {% if acesso.tipo_acesso == 'login' %}
+                                    <i class="fas fa-sign-in-alt" style="color: #059669;"></i>
+                                {% elif acesso.tipo_acesso == 'logout' %}
+                                    <i class="fas fa-sign-out-alt" style="color: #dc2626;"></i>
+                                {% elif 'admin' in acesso.tipo_acesso %}
+                                    <i class="fas fa-cog" style="color: #f59e0b;"></i>
+                                {% else %}
+                                    <i class="fas fa-mouse-pointer" style="color: #2563eb;"></i>
+                                {% endif %}
+                            </div>
+                            <div class="activity-content">
+                                <h4>{{ acesso.tipo_acesso.replace('_', ' ')|title }}</h4>
+                                <p>{{ acesso.recurso or 'Página principal' }}</p>
+                            </div>
+                            <div class="activity-date">
+                                <small>{{ acesso.data_hora.strftime('%d/%m/%Y %H:%M') }}</small>
+                                {% if acesso.endereco_ip %}
+                                    <small class="ip">{{ acesso.endereco_ip }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p>Nenhum acesso registrado ainda</p>
+                </div>
+            {% endif %}
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="quick-actions">
+            <div class="section-header">
+                <h2><i class="fas fa-bolt"></i> Ações Rápidas</h2>
+            </div>
+
+            <div class="actions-grid">
+                <a href="/membros/perfil" class="action-card">
+                    <i class="fas fa-user-edit"></i>
+                    <h3>Editar Perfil</h3>
+                    <p>Atualize seus dados pessoais e informações de contato</p>
+                </a>
+
+                <a href="/membros/redes-sociais" class="action-card">
+                    <i class="fas fa-share-alt"></i>
+                    <h3>Redes Sociais</h3>
+                    <p>Gerencie suas credenciais e integração com redes sociais</p>
+                </a>
+
+                <a href="/membros/alterar-senha" class="action-card">
+                    <i class="fas fa-key"></i>
+                    <h3>Alterar Senha</h3>
+                    <p>Mantenha sua conta segura com uma senha forte</p>
+                </a>
+
+                <a href="/membros/seguranca" class="action-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Segurança</h3>
+                    <p>Configurações avançadas de proteção da conta</p>
+                </a>
+
+                {% if current_user.cargo == 'Administrador' %}
+                <a href="/admin/relatorios" class="action-card" style="border: 2px solid #f59e0b;">
+                    <i class="fas fa-chart-bar" style="color: #f59e0b;"></i>
+                    <h3 style="color: #92400e;">Relatórios</h3>
+                    <p>Visualize estatísticas e relatórios do sistema</p>
+                </a>
+                {% endif %}
+
+                <a href="/empreendimentos" class="action-card">
+                    <i class="fas fa-building"></i>
+                    <h3>Empreendimentos</h3>
+                    <p>Explore nossos projetos e lançamentos</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- System Status -->
+        <section class="system-status" style="margin-bottom: 1rem;">
+            <div class="welcome-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 1rem 2rem;">
+                <div class="welcome-content">
+                    <h1 style="font-size: 1.2rem;">🟢 Sistema Operacional</h1>
+                    <p>Todos os serviços funcionando normalmente</p>
+                </div>
+                <div class="welcome-actions">
+                    <small style="opacity: 0.8;">Última atualização: {{ moment().format('DD/MM/YYYY HH:mm') if moment else 'agora' }}</small>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Carregar contagem de redes sociais
+async function loadSocialNetworksCount() {
+    try {
+        const response = await fetch('/api/user/redes-sociais');
+        if (response.ok) {
+            const data = await response.json();
+            const count = data.redes ? data.redes.length : 0;
+            document.getElementById('redes-count').textContent = `${count} rede${count !== 1 ? 's' : ''} conectada${count !== 1 ? 's' : ''}`;
+            document.getElementById('redes-count').className = '';
+        } else {
+            throw new Error('Erro na resposta');
+        }
+    } catch (error) {
+        console.warn('Erro ao carregar redes sociais:', error);
+        document.getElementById('redes-count').textContent = 'Indisponível';
+        document.getElementById('redes-count').className = '';
+    }
+}
+
+// Atualizar timestamp em tempo real
+function updateTimestamp() {
+    const now = new Date();
+    const timestamp = now.toLocaleString('pt-BR');
+    const statusSection = document.querySelector('.system-status small');
+    if (statusSection) {
+        statusSection.textContent = `Última atualização: ${timestamp}`;
+    }
+}
+
+// Carregar dados ao inicializar a página
+document.addEventListener('DOMContentLoaded', function() {
+    loadSocialNetworksCount();
+    updateTimestamp();
+    
+    // Atualizar timestamp a cada minuto
+    setInterval(updateTimestamp, 60000);
+});
+
+// Smooth scroll para seções
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+
+// Auto-refresh de dados a cada 5 minutos (opcional)
+setInterval(function() {
+    loadSocialNetworksCount();
+}, 300000); // 5 minutos
+</script>
+{% endblock %}

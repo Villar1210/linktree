@@ -1,0 +1,482 @@
+{% extends "base.html" %}
+
+{% block title %}Lumiar - Empreendimentos Suzano e Mogi{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- User Welcome Section (if logged in) -->
+    {% if user_info %}
+    <section class="user-welcome">
+        <div class="welcome-card">
+            <div class="welcome-content">
+                <h2 class="welcome-title">👋 Olá, {{ user_info.nome }}!</h2>
+                <p class="welcome-subtitle">
+                    {% if user_info.tipo == 'cliente' %}
+                        Encontre o imóvel dos seus sonhos em Suzano e Mogi das Cruzes
+                    {% elif user_info.tipo == 'corretor' %}
+                        Gerencie seus leads e vendas na região
+                    {% elif user_info.tipo == 'imobiliaria' %}
+                        Administre sua equipe e portfólio regional
+                    {% elif user_info.tipo == 'admin' %}
+                        Controle total da plataforma
+                    {% endif %}
+                </p>
+            </div>
+            <div class="welcome-actions">
+                {% if user_info.tipo == 'admin' %}
+                    <a href="{{ url_for('admin.dashboard') }}" class="btn-dashboard">
+                        <span class="btn-icon">⚙️</span>
+                        Painel Admin
+                    </a>
+                {% elif user_info.tipo == 'corretor' %}
+                    <a href="{{ url_for('corretor.dashboard') }}" class="btn-dashboard">
+                        <span class="btn-icon">💼</span>
+                        Meu Dashboard
+                    </a>
+                {% elif user_info.tipo == 'imobiliaria' %}
+                    <a href="{{ url_for('imobiliaria.dashboard') }}" class="btn-dashboard">
+                        <span class="btn-icon">🏢</span>
+                        Painel Imobiliária
+                    </a>
+                {% elif user_info.tipo == 'cliente' %}
+                    <a href="{{ url_for('cliente.dashboard') }}" class="btn-dashboard">
+                        <span class="btn-icon">🏠</span>
+                        Meus Favoritos
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">🏗️ Construtora Lumiar</h1>
+            <p class="hero-subtitle">
+                {% if user_info %}
+                    Seja bem-vindo(a) de volta! Confira nossos empreendimentos em Suzano e Mogi das Cruzes.
+                {% else %}
+                    Empreendimentos de qualidade em Suzano e Mogi das Cruzes
+                {% endif %}
+            </p>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number">6</span>
+                    <span class="stat-label">Empreendimentos</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">15+</span>
+                    <span class="stat-label">Anos no Mercado</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">800+</span>
+                    <span class="stat-label">Famílias Atendidas</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Regional Cards -->
+    <section class="regional-cards">
+        <h2 class="section-title">🏙️ Cidades Atendidas</h2>
+        <div class="cities-grid">
+            <!-- Card Suzano -->
+            <div class="city-card suzano">
+                <div class="city-header">
+                    <div class="city-icon">🏙️</div>
+                    <div class="city-info">
+                        <h3>Suzano</h3>
+                        <p>3 empreendimentos disponíveis</p>
+                    </div>
+                </div>
+                <div class="city-highlights">
+                    <div class="highlight-item">
+                        <span class="highlight-icon">🚇</span>
+                        <span>Próximo ao metrô</span>
+                    </div>
+                    <div class="highlight-item">
+                        <span class="highlight-icon">🌳</span>
+                        <span>Área verde preservada</span>
+                    </div>
+                    <div class="highlight-item">
+                        <span class="highlight-icon">🏢</span>
+                        <span>Centro comercial</span>
+                    </div>
+                </div>
+                <div class="city-projects">
+                    <div class="project-mini">
+                        <span class="project-name">Residencial Suzano Gardens</span>
+                        <span class="project-price">A partir de R$ 320.000</span>
+                    </div>
+                    <div class="project-mini">
+                        <span class="project-name">Suzano Metropolitan</span>
+                        <span class="project-price">A partir de R$ 280.000</span>
+                    </div>
+                    <div class="project-mini">
+                        <span class="project-name">Condomínio Suzano Ville</span>
+                        <span class="project-price">A partir de R$ 520.000</span>
+                    </div>
+                </div>
+                <div class="city-actions">
+                    <a href="/empreendimentos?cidade=suzano" class="btn btn-primary">
+                        Ver Empreendimentos
+                    </a>
+                    <a href="https://wa.me/5511999665544?text=Olá! Tenho interesse nos empreendimentos de Suzano." 
+                       target="_blank" class="btn btn-whatsapp">
+                        <span class="whatsapp-icon">💬</span>
+                        WhatsApp Suzano
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card Mogi das Cruzes -->
+            <div class="city-card mogi">
+                <div class="city-header">
+                    <div class="city-icon">🏔️</div>
+                    <div class="city-info">
+                        <h3>Mogi das Cruzes</h3>
+                        <p>3 empreendimentos disponíveis</p>
+                    </div>
+                </div>
+                <div class="city-highlights">
+                    <div class="highlight-item">
+                        <span class="highlight-icon">⛰️</span>
+                        <span>Vista da Serra do Itapety</span>
+                    </div>
+                    <div class="highlight-item">
+                        <span class="highlight-icon">🌿</span>
+                        <span>Clima serrano</span>
+                    </div>
+                    <div class="highlight-item">
+                        <span class="highlight-icon">🚗</span>
+                        <span>Fácil acesso São Paulo</span>
+                    </div>
+                </div>
+                <div class="city-projects">
+                    <div class="project-mini">
+                        <span class="project-name">Mogi das Cruzes Residencial</span>
+                        <span class="project-price">A partir de R$ 450.000</span>
+                    </div>
+                    <div class="project-mini">
+                        <span class="project-name">Residencial Mogi Premium</span>
+                        <span class="project-price">A partir de R$ 380.000</span>
+                    </div>
+                    <div class="project-mini">
+                        <span class="project-name">Residencial Mogi Hills</span>
+                        <span class="project-price">A partir de R$ 650.000</span>
+                    </div>
+                </div>
+                <div class="city-actions">
+                    <a href="/empreendimentos?cidade=mogi" class="btn btn-primary">
+                        Ver Empreendimentos
+                    </a>
+                    <a href="https://wa.me/5511999554433?text=Olá! Tenho interesse nos empreendimentos de Mogi das Cruzes." 
+                       target="_blank" class="btn btn-whatsapp">
+                        <span class="whatsapp-icon">💬</span>
+                        WhatsApp Mogi
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Actions -->
+    <section class="main-actions">
+        <h2 class="section-title">🚀 Oportunidades Disponíveis</h2>
+        <div class="actions-grid">
+            <!-- Lançamentos -->
+            <a href="/empreendimentos?status=lancamento" class="action-card primary">
+                <div class="card-icon">🆕</div>
+                <h3>Lançamentos</h3>
+                <p>Primeiras unidades com condições especiais</p>
+                <span class="card-count">2 lançamentos</span>
+                <div class="card-benefits">
+                    <span class="benefit">✓ Entrada facilitada</span>
+                    <span class="benefit">✓ Documentação grátis</span>
+                </div>
+            </a>
+
+            <!-- Prontos para Morar -->
+            <a href="/empreendimentos?status=disponivel" class="action-card success">
+                <div class="card-icon">🔑</div>
+                <h3>Prontos para Morar</h3>
+                <p>Chaves na mão, sem espera</p>
+                <span class="card-count">3 disponíveis</span>
+                <div class="card-benefits">
+                    <span class="benefit">✓ Chaves imediatas</span>
+                    <span class="benefit">✓ Sem taxa corretagem</span>
+                </div>
+            </a>
+
+            <!-- Campanhas Especiais -->
+            <a href="/campanhas" class="action-card highlight">
+                <div class="card-icon">⚡</div>
+                <h3>Campanhas Especiais</h3>
+                <p>Condições exclusivas região leste</p>
+                <span class="card-offer">10% OFF + Brinde</span>
+                <div class="card-benefits">
+                    <span class="benefit">✓ FGTS aceito</span>
+                    <span class="benefit">✓ Financiamento até 35 anos</span>
+                </div>
+            </a>
+
+            <!-- Seja Corretor -->
+            <a href="/vagas" class="action-card secondary">
+                <div class="card-icon">💼</div>
+                <h3>Seja Nosso Corretor</h3>
+                <p>Oportunidades na região leste</p>
+                <span class="card-badge">Vagas Abertas</span>
+                <div class="card-benefits">
+                    <span class="benefit">✓ Comissão até 3,5%</span>
+                    <span class="benefit">✓ Leads qualificados</span>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- WhatsApp Contact -->
+    <section class="whatsapp-section">
+        <div class="whatsapp-card">
+            <div class="whatsapp-content">
+                <div class="whatsapp-icon">💬</div>
+                <div class="whatsapp-text">
+                    <h3>Fale com Daniel</h3>
+                    <p>Gerente Comercial Regional - Especialista em Suzano e Mogi das Cruzes</p>
+                </div>
+            </div>
+            <a href="https://wa.me/5511999887766?text=Olá Daniel! Vim do site da Lumiar e gostaria de mais informações sobre os empreendimentos em Suzano e Mogi das Cruzes." 
+               target="_blank" 
+               class="whatsapp-button">
+                Conversar no WhatsApp
+            </a>
+        </div>
+    </section>
+
+    <!-- Quick Contact by Type -->
+    <section class="quick-contact">
+        <h2>Contato por Tipo de Imóvel</h2>
+        <div class="contact-grid">
+            <a href="https://wa.me/5511999776655?text=Olá! Gostaria de informações sobre apartamentos em Suzano e Mogi." 
+               target="_blank" 
+               class="contact-item">
+                <span class="contact-icon">🏠</span>
+                <span>Apartamentos</span>
+                <small>A partir de R$ 280.000</small>
+            </a>
+            <a href="https://wa.me/5511999776655?text=Olá! Tenho interesse em casas na região de Suzano e Mogi das Cruzes." 
+               target="_blank" 
+               class="contact-item">
+                <span class="contact-icon">🏘️</span>
+                <span>Casas</span>
+                <small>A partir de R$ 450.000</small>
+            </a>
+            <a href="https://wa.me/5511999776655?text=Olá! Quero saber sobre condomínios fechados em Suzano e Mogi." 
+               target="_blank" 
+               class="contact-item">
+                <span class="contact-icon">🏞️</span>
+                <span>Condomínios</span>
+                <small>Área de lazer completa</small>
+            </a>
+            <a href="https://wa.me/5511999887766?text=Olá Daniel! Gostaria de trabalhar como corretor na região de Suzano e Mogi das Cruzes." 
+               target="_blank" 
+               class="contact-item">
+                <span class="contact-icon">💼</span>
+                <span>Seja Corretor</span>
+                <small>Comissão até 3,5%</small>
+            </a>
+        </div>
+    </section>
+</div>
+
+<style>
+/* Estilos específicos para cards regionais */
+.regional-cards {
+    margin: 3rem 0;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 2rem;
+}
+
+.cities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.city-card {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--shadow-lg);
+    border: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.city-card.suzano {
+    border-color: #059669;
+}
+
+.city-card.mogi {
+    border-color: #2563eb;
+}
+
+.city-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.city-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.city-icon {
+    font-size: 2.5rem;
+}
+
+.city-info h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--dark-color);
+    margin-bottom: 0.25rem;
+}
+
+.city-info p {
+    color: var(--gray-600);
+    font-size: 0.875rem;
+}
+
+.city-highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.highlight-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--gray-100);
+    padding: 0.5rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+}
+
+.highlight-icon {
+    font-size: 1rem;
+}
+
+.city-projects {
+    margin-bottom: 1.5rem;
+}
+
+.project-mini {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.project-mini:last-child {
+    border-bottom: none;
+}
+
+.project-name {
+    font-weight: 500;
+    color: var(--dark-color);
+}
+
+.project-price {
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 0.875rem;
+}
+
+.city-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    text-align: center;
+    flex: 1;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--secondary-color);
+}
+
+.btn-whatsapp {
+    background: #25d366;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-whatsapp:hover {
+    background: #128c7e;
+}
+
+.card-benefits {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-top: 0.75rem;
+}
+
+.benefit {
+    font-size: 0.75rem;
+    color: var(--success-color);
+    font-weight: 500;
+}
+
+.contact-item small {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--gray-600);
+    margin-top: 0.25rem;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .cities-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .city-actions {
+        flex-direction: column;
+    }
+    
+    .actions-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .contact-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+</style>
+{% endblock %}

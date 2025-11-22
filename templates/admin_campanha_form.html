@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5" style="max-width: 600px;">
+  <h2>{{ campanha and 'Editar' or 'Nova' }} Campanha</h2>
+  <form method="post" enctype="multipart/form-data">
+    <!-- Imagem -->
+    <div class="mb-3">
+      <label class="form-label">Imagem</label>
+      <input type="text" name="imagem_url" class="form-control mb-2" value="{{ campanha.imagem if campanha else '' }}" placeholder="URL da imagem">
+      <input type="file" name="imagem_upload" class="form-control">
+      <small class="form-text text-muted">Você pode informar uma URL ou fazer upload de uma imagem.</small>
+    </div>
+    <!-- Vídeo -->
+    <div class="mb-3">
+      <label class="form-label">Vídeo (URL YouTube/Vimeo ou MP4)</label>
+      <input type="text" name="video" class="form-control" value="{{ campanha.video if campanha else '' }}" placeholder="URL do vídeo">
+    </div>
+    <!-- Áudio -->
+    <div class="mb-3">
+      <label class="form-label">Áudio (URL MP3/Ogg)</label>
+      <input type="text" name="audio" class="form-control" value="{{ campanha.audio if campanha else '' }}" placeholder="URL do áudio">
+    </div>
+    <!-- Cor de Fundo -->
+    <div class="mb-3">
+      <label class="form-label">Cor de Fundo</label>
+      <input type="color" name="cor_fundo" class="form-control form-control-color" value="{{ campanha.cor_fundo if campanha and campanha.cor_fundo else '#ffe6b3' }}">
+    </div>
+    <!-- Cor do Texto -->
+    <div class="mb-3">
+      <label class="form-label">Cor do Texto</label>
+      <input type="color" name="cor_texto" class="form-control form-control-color" value="{{ campanha.cor_texto if campanha and campanha.cor_texto else '#222222' }}">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Título</label>
+      <input type="text" name="titulo" class="form-control" required value="{{ campanha.titulo if campanha else '' }}">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Subtítulo</label>
+      <input type="text" name="subtitulo" class="form-control" value="{{ campanha.subtitulo if campanha else '' }}">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Desconto</label>
+      <input type="text" name="desconto" class="form-control" value="{{ campanha.desconto if campanha else '' }}" placeholder="Ex: 10% OFF + Brinde">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Benefícios <small>(separe por ponto e vírgula ;)</small></label>
+      <input type="text" name="beneficios" class="form-control" value="{{ campanha.beneficios if campanha else '' }}" placeholder="FGTS aceito;Financiamento até 35 anos">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Condições</label>
+      <input type="text" name="condicoes" class="form-control" value="{{ campanha.condicoes if campanha else '' }}" placeholder="Condições exclusivas região leste">
+    </div>
+    <div class="form-check form-switch mb-3">
+      <input class="form-check-input" type="checkbox" name="destaque" id="destaque" {% if campanha and campanha.destaque %}checked{% endif %}>
+      <label class="form-check-label" for="destaque">Destaque</label>
+    </div>
+    <div class="form-check form-switch mb-3">
+      <input class="form-check-input" type="checkbox" name="ativo" id="ativo" {% if campanha is none or campanha.ativo %}checked{% endif %}>
+      <label class="form-check-label" for="ativo">Ativo</label>
+    </div>
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    <a href="{{ url_for('admin.admin_campanhas') }}" class="btn btn-secondary ms-2">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

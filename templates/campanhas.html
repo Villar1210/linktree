@@ -1,275 +1,58 @@
 {% extends "base.html" %}
 
-{% block title %}Campanhas Especiais - Lumiar{% endblock %}
+{% block title %}Campanhas Promocionais{% endblock %}
 
 {% block content %}
-<div class="container">
-    <section class="page-header">
-        <h1>🎯 Campanhas Especiais</h1>
-        <p>Aproveite nossas ofertas exclusivas por tempo limitado!</p>
-    </section>
-
-    <div class="campanhas-grid">
+<div class="container py-5">
+    <h2 class="mb-4">Campanhas Promocionais</h2>
+    {% if campanhas %}
+    <div class="row">
         {% for campanha in campanhas %}
-        <div class="campanha-card">
-            <div class="campanha-header">
-                <h2 class="campanha-titulo">{{ campanha.titulo }}</h2>
-                <p class="campanha-subtitulo">{{ campanha.subtitulo }}</p>
-            </div>
-            
-            <div class="campanha-destaque">
-                <div class="desconto-badge">{{ campanha.desconto }}</div>
-                <div class="prazo-info">{{ campanha.prazo }}</div>
-            </div>
-            
-            {% if campanha.condicoes %}
-            <div class="campanha-condicoes">
-                <h4>📋 Condições:</h4>
-                <ul>
-                    {% for condicao in campanha.condicoes %}
-                    <li>{{ condicao }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-            {% endif %}
-            
-            {% if campanha.empreendimentos %}
-            <div class="campanha-empreendimentos">
-                <h4>🏠 Empreendimentos inclusos:</h4>
-                <div class="empreendimentos-lista">
-                    {% for emp_id in campanha.empreendimentos %}
-                        {% for emp in empreendimentos %}
-                            {% if emp.id == emp_id %}
-                            <div class="empreendimento-mini">
-                                <strong>{{ emp.nome }}</strong>
-                                <span class="preco">{{ emp.preco }}</span>
-                                <span class="localizacao">📍 {{ emp.localizacao }}</span>
-                            </div>
-                            {% endif %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card shadow-sm h-100 border-warning border-top border-3" style="background:{{ campanha.cor_fundo if campanha.cor_fundo else '#fff' }}; color:{{ campanha.cor_texto if campanha.cor_texto else '#222' }};">
+                <div class="card-body">
+                    <div class="mb-2" style="font-size:2rem; color:#ff9800;">
+                        <span>⚡</span>
+                    </div>
+                    {% if campanha.imagem %}
+                        <img src="{{ campanha.imagem }}" alt="Imagem da campanha" class="img-fluid rounded mb-2" style="max-height:120px; object-fit:cover; width:100%;">
+                    {% endif %}
+                    {% if campanha.video %}
+                        <div class="mb-2">
+                            <video controls style="width:100%; max-height:180px;">
+                                <source src="{{ campanha.video }}">
+                                Seu navegador não suporta vídeo.
+                            </video>
+                        </div>
+                    {% endif %}
+                    {% if campanha.audio %}
+                        <div class="mb-2">
+                            <audio controls style="width:100%;">
+                                <source src="{{ campanha.audio }}">
+                                Seu navegador não suporta áudio.
+                            </audio>
+                        </div>
+                    {% endif %}
+                    <h5 class="card-title fw-bold">{{ campanha.titulo }}</h5>
+                    <div class="text-muted mb-2">{{ campanha.subtitulo }}</div>
+                    {% if campanha.desconto %}
+                    <span class="badge bg-warning text-dark mb-2">{{ campanha.desconto }}</span>
+                    {% endif %}
+                    <ul class="list-unstyled mt-2 mb-0">
+                        {% for beneficio in campanha.beneficios_lista() %}
+                        <li class="text-success fw-semibold">✓ {{ beneficio }}</li>
                         {% endfor %}
-                    {% endfor %}
+                    </ul>
+                    {% if campanha.condicoes %}
+                    <div class="mt-2 text-secondary small">{{ campanha.condicoes }}</div>
+                    {% endif %}
                 </div>
-            </div>
-            {% endif %}
-            
-            <div class="campanha-footer">
-                <a href="{{ WHATSAPP_VENDAS|whatsapp_link('Olá! Tenho interesse na campanha: ' ~ campanha.titulo) }}" 
-                   target="_blank" 
-                   class="campanha-button">
-                    💬 Quero Aproveitar Esta Oferta!
-                </a>
             </div>
         </div>
         {% endfor %}
     </div>
-
-    <!-- Call to Action Geral -->
-    <section class="whatsapp-section">
-        <div class="whatsapp-card">
-            <div class="whatsapp-content">
-                <div class="whatsapp-icon">💬</div>
-                <div class="whatsapp-text">
-                    <h3>Não perca essas oportunidades!</h3>
-                    <p>Fale conosco agora e garante sua condição especial</p>
-                </div>
-            </div>
-            <a href="{{ WHATSAPP_VENDAS|whatsapp_link('Olá! Quero saber mais sobre as campanhas especiais da Lumiar.') }}" 
-               target="_blank" 
-               class="whatsapp-button">
-                Falar com Especialista
-            </a>
-        </div>
-    </section>
+    {% else %}
+    <div class="alert alert-info">Nenhuma campanha ativa no momento.</div>
+    {% endif %}
 </div>
-
-<style>
-/* Estilos específicos para campanhas */
-.campanhas-grid {
-    display: grid;
-    gap: 3rem;
-    margin-bottom: 4rem;
-}
-
-.campanha-card {
-    background: white;
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    box-shadow: var(--shadow-lg);
-    border: 3px solid var(--warning-color);
-    position: relative;
-}
-
-.campanha-card::before {
-    content: "OFERTA ESPECIAL";
-    position: absolute;
-    top: 1rem;
-    right: -2rem;
-    background: var(--danger-color);
-    color: white;
-    padding: 0.5rem 3rem;
-    font-size: 0.75rem;
-    font-weight: 700;
-    transform: rotate(45deg);
-    z-index: 10;
-}
-
-.campanha-header {
-    background: linear-gradient(135deg, var(--warning-color), #f59e0b);
-    color: white;
-    padding: 2rem;
-    text-align: center;
-}
-
-.campanha-titulo {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-}
-
-.campanha-subtitulo {
-    font-size: 1.1rem;
-    opacity: 0.9;
-    margin: 0;
-}
-
-.campanha-destaque {
-    background: linear-gradient(135deg, #fee2e2, #fecaca);
-    padding: 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.desconto-badge {
-    background: var(--danger-color);
-    color: white;
-    padding: 1rem 2rem;
-    border-radius: 50px;
-    font-size: 1.5rem;
-    font-weight: 700;
-    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
-}
-
-.prazo-info {
-    background: var(--dark-color);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 25px;
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.campanha-condicoes, .campanha-empreendimentos {
-    padding: 2rem;
-    border-bottom: 1px solid var(--gray-200);
-}
-
-.campanha-condicoes h4, .campanha-empreendimentos h4 {
-    color: var(--dark-color);
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-}
-
-.campanha-condicoes ul {
-    list-style: none;
-    padding: 0;
-}
-
-.campanha-condicoes li {
-    padding: 0.5rem 0;
-    padding-left: 1.5rem;
-    position: relative;
-    color: var(--gray-600);
-}
-
-.campanha-condicoes li::before {
-    content: "✓";
-    position: absolute;
-    left: 0;
-    color: var(--success-color);
-    font-weight: bold;
-}
-
-.empreendimentos-lista {
-    display: grid;
-    gap: 1rem;
-}
-
-.empreendimento-mini {
-    background: var(--gray-100);
-    padding: 1rem;
-    border-radius: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.empreendimento-mini strong {
-    color: var(--dark-color);
-}
-
-.empreendimento-mini .preco {
-    color: var(--success-color);
-    font-weight: 600;
-}
-
-.empreendimento-mini .localizacao {
-    color: var(--gray-600);
-    font-size: 0.9rem;
-}
-
-.campanha-footer {
-    padding: 2rem;
-    text-align: center;
-    background: var(--light-color);
-}
-
-.campanha-button {
-    background: linear-gradient(135deg, var(--success-color), #047857);
-    color: white;
-    padding: 1rem 2rem;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 1.1rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s;
-    box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
-}
-
-.campanha-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(5, 150, 105, 0.4);
-    color: white;
-    text-decoration: none;
-}
-
-/* Responsivo */
-@media (max-width: 768px) {
-    .campanha-destaque {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .empreendimento-mini {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .campanha-titulo {
-        font-size: 1.5rem;
-    }
-    
-    .desconto-badge {
-        font-size: 1.2rem;
-        padding: 0.75rem 1.5rem;
-    }
-}
-</style>
 {% endblock %}

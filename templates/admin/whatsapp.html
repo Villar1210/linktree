@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}Configuração de WhatsApp - Admin{% endblock %}
+{% block content %}
+<div class="admin-container">
+    <h1 class="admin-title"><i class="fab fa-whatsapp"></i> Configuração de WhatsApp</h1>
+    <form method="POST" class="admin-form">
+        <div class="form-row">
+            <div class="form-group">
+                <label>Tipo *</label>
+                <input type="text" name="tipo" class="form-control" placeholder="vendas, suporte, gerente" required>
+            </div>
+            <div class="form-group">
+                <label>Número *</label>
+                <input type="text" name="numero" class="form-control" placeholder="Ex: 5511999999999" required>
+            </div>
+            <div class="form-group">
+                <label>Nome Exibição *</label>
+                <input type="text" name="nome_display" class="form-control" placeholder="Ex: Vendas Lumiar" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Descrição</label>
+                <input type="text" name="descricao" class="form-control" placeholder="Descrição opcional">
+            </div>
+            <div class="form-group">
+                <label>Mensagem Padrão</label>
+                <input type="text" name="mensagem_padrao" class="form-control" placeholder="Mensagem padrão ao abrir o WhatsApp">
+            </div>
+            <div class="form-group">
+                <label>Horário Funcionamento</label>
+                <input type="text" name="horario_funcionamento" class="form-control" placeholder="Ex: Seg-Sex 8h-18h">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Cor do Ícone</label>
+                <input type="color" name="icon_cor" class="form-control" value="#25d366">
+            </div>
+            <div class="form-group">
+                <label>Responde Automático</label>
+                <input type="checkbox" name="responde_automatico">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Adicionar WhatsApp</button>
+    </form>
+    <hr>
+    <h2 class="admin-subtitle">WhatsApps Configurados</h2>
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tipo</th>
+                <th>Número</th>
+                <th>Nome</th>
+                <th>Ativo</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for w in whatsapps %}
+            <tr>
+                <td>{{ w.id }}</td>
+                <td>{{ w.tipo }}</td>
+                <td>{{ w.numero }}</td>
+                <td>{{ w.nome_display }}</td>
+                <td>{% if w.ativo %}<span class="badge badge-success">Sim</span>{% else %}<span class="badge badge-danger">Não</span>{% endif %}</td>
+                <td>
+                    <form method="POST" action="/admin/whatsapp/{{ w.id }}/editar" style="display:inline-block">
+                        <button class="btn btn-sm btn-warning" title="Editar"><i class="fas fa-edit"></i></button>
+                    </form>
+                    <button class="btn btn-sm btn-danger" onclick="deletarWhatsApp({{ w.id }})" title="Deletar"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script>
+function deletarWhatsApp(id) {
+    if(confirm('Deseja realmente remover este WhatsApp?')) {
+        fetch(`/admin/whatsapp/${id}/deletar`, {method: 'DELETE'})
+        .then(r => r.json())
+        .then(data => {
+            alert(data.mensagem);
+            if(data.sucesso) location.reload();
+        });
+    }
+}
+</script>
+{% endblock %}

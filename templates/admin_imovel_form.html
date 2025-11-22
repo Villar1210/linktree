@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5" style="max-width: 700px;">
+  <h2>{{ imovel and 'Editar' or 'Novo' }} Imóvel</h2>
+  <form method="post">
+    <div class="mb-3">
+      <label class="form-label">Nome</label>
+      <input type="text" name="nome" class="form-control" required value="{{ imovel.nome if imovel else '' }}">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Tipo</label>
+      <input type="text" name="tipo" class="form-control" required value="{{ imovel.tipo if imovel else '' }}" placeholder="Apartamento, Casa, Cobertura...">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Status</label>
+      <input type="text" name="status" class="form-control" value="{{ imovel.status if imovel else 'Disponível' }}">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Preço</label>
+      <input type="number" step="0.01" name="preco" class="form-control" required value="{{ imovel.preco if imovel else '' }}">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Localização</label>
+      <input type="text" name="localizacao" class="form-control" value="{{ imovel.localizacao if imovel else '' }}">
+    </div>
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Quartos</label>
+        <input type="number" name="quartos" class="form-control" value="{{ imovel.quartos if imovel else '' }}">
+      </div>
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Banheiros</label>
+        <input type="number" name="banheiros" class="form-control" value="{{ imovel.banheiros if imovel else '' }}">
+      </div>
+      <div class="col-md-4 mb-3">
+        <label class="form-label">Área</label>
+        <input type="text" name="area" class="form-control" value="{{ imovel.area if imovel else '' }}" placeholder="Ex: 65m²">
+      </div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Imagem principal (URL ou upload)</label>
+      <input type="text" name="imagem_url" class="form-control mb-2" value="{{ imovel.imagem if imovel else '' }}" placeholder="URL da imagem principal">
+      <input type="file" name="imagem_upload" class="form-control">
+      <small class="form-text text-muted">Você pode informar uma URL ou fazer upload de uma imagem.</small>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Vídeo (URL YouTube/Vimeo ou MP4)</label>
+      <input type="text" name="video" class="form-control" value="{{ imovel.video if imovel and imovel.video else '' }}" placeholder="URL do vídeo">
+      <input type="file" name="video_upload" class="form-control mt-1">
+      <small class="form-text text-muted">Você pode informar uma URL ou fazer upload de um vídeo.</small>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">PDF/Planta (URL ou upload)</label>
+      <input type="text" name="planta_pdf" class="form-control" value="{{ imovel.planta_pdf if imovel and imovel.planta_pdf else '' }}" placeholder="URL do PDF/planta">
+      <input type="file" name="planta_pdf_upload" class="form-control mt-1" accept="application/pdf">
+      <small class="form-text text-muted">Você pode informar uma URL ou fazer upload de um PDF/planta.</small>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Galeria de Imagens (upload múltiplo)</label>
+      <input type="file" name="galeria_upload" class="form-control" multiple accept="image/*">
+      <small class="form-text text-muted">Selecione várias imagens para a galeria.</small>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Descrição</label>
+      <textarea name="descricao" class="form-control" rows="3">{{ imovel.descricao if imovel else '' }}</textarea>
+    </div>
+    <div class="form-check form-switch mb-3">
+      <input class="form-check-input" type="checkbox" name="destaque" id="destaque" {% if imovel and imovel.destaque %}checked{% endif %}>
+      <label class="form-check-label" for="destaque">Destaque</label>
+    </div>
+    <div class="form-check form-switch mb-3">
+      <input class="form-check-input" type="checkbox" name="ativo" id="ativo" {% if imovel is none or imovel.ativo %}checked{% endif %}>
+      <label class="form-check-label" for="ativo">Ativo</label>
+    </div>
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    <a href="{{ url_for('admin.admin_imoveis') }}" class="btn btn-secondary ms-2">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

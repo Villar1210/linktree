@@ -1,24 +1,49 @@
-from flask import Flask, render_template, jsonify
+
+from flask import Flask, render_template, jsonify, redirect, url_for, flash, session
+from flask_migrate import Migrate
 import json
 import os
 import requests
-from datetime import datetime
-from dotenv import load_dotenv
+from config import Config
+from models import db, init_database, create_sample_data, User, Campanha
 
-# Carregar variáveis de ambiente
-load_dotenv()
-
+# Criar aplicação Flask
 app = Flask(__name__)
 
-# Configurações
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'lumiar_secret_key_2024')
+# Registrar blueprints
+from routes_auth import auth_bp
+app.register_blueprint(auth_bp, url_prefix='/auth')
 
-# Configurações do WhatsApp
-WHATSAPP_DANIEL = os.getenv('WHATSAPP_DANIEL', "5511999999999")  # Número do Daniel
-WHATSAPP_VENDAS = os.getenv('WHATSAPP_VENDAS', "5511888888888")  # Número de vendas
+# Debug: imprimir todos os endpoints registrados e rodar app localmente
+if __name__ == "__main__":
+    print("==== FLASK URL MAP ====")
+    print(app.url_map)
+    app.run(debug=True)
+# app.secret_key = 'SUA_CHAVE_SECRETA_AQUI'  # Removido: valor será lido do .env/config
+
+# Configurações
+app.config.from_object(Config)
+
+# Inicializar banco de dados e migrações
+migrate = Migrate(app, db)
+init_database(app)
+
+# Registrar blueprints
+from routes_auth import auth_bp
+from routes_admin import admin_bp  
+from routes_corretor import corretor_bp
+from routes_cliente import cliente_bp
+from routes_imobiliaria import imobiliaria_bp
+
+app.register_blueprint(admin_bp)
+app.register_blueprint(corretor_bp) 
+app.register_blueprint(cliente_bp)
+app.register_blueprint(imobiliaria_bp)
+
+
 
 # URLs do Google Drive (substitua pelos seus links públicos)
-GOOGLE_DRIVE_JSON_URL = os.getenv('GOOGLE_DRIVE_JSON_URL', "https://drive.google.com/uc?export=download&id=SEU_ID_ARQUIVO")
+GOOGLE_DRIVE_JSON_URL = "https://drive.google.com/uc?export=download&id=SEU_ID_ARQUIVO"
 
 def carregar_empreendimentos():
     """Carrega dados dos empreendimentos do Google Drive ou arquivo local"""
@@ -104,21 +129,28 @@ def carregar_empreendimentos():
 
 @app.route('/')
 def index():
-    """Página principal com todos os botões"""
+    """Página principal com todos os botões e campanhas"""
     dados = carregar_empreendimentos()
-    return render_template('index.html', 
-                         dados=dados,
-                         whatsapp_daniel=WHATSAPP_DANIEL,
-                         whatsapp_vendas=WHATSAPP_VENDAS)
+    campanhas = Campanha.query.filter_by(ativo=True).order_by(Campanha.destaque.desc(), Campanha.criado_em.desc()).all()
+    # Verificar se o usuário está logado para personalizar a experiência
+    user_info = None
+    if 'user_id' in session:
+        user = User.query.get(session['user_id'])
+        if user:
+            user_info = {
+                'nome': user.nome,
+                'tipo': user.user_type.value,
+                'email': user.email
+            }
+    return render_template('index.html', dados=dados, user_info=user_info, campanhas=campanhas)
+
 
 @app.route('/empreendimentos')
 def empreendimentos():
-    """Página com lista de empreendimentos"""
-    dados = carregar_empreendimentos()
-    return render_template('empreendimentos.html', 
-                         empreendimentos=dados.get('empreendimentos', []),
-                         whatsapp_daniel=WHATSAPP_DANIEL,
-                         whatsapp_vendas=WHATSAPP_VENDAS)
+    """Página com lista de empreendimentos (imóveis do banco)"""
+    from models import Property
+    empreendimentos = Property.query.filter_by(ativo=True).order_by(Property.destaque.desc(), Property.criado_em.desc()).all()
+    return render_template('empreendimentos.html', empreendimentos=empreendimentos)
 
 @app.route('/api/empreendimentos')
 def api_empreendimentos():
@@ -127,37 +159,117 @@ def api_empreendimentos():
     return jsonify(dados)
 
 @app.route('/campanhas')
-@app.route('/campanhas')
 def campanhas():
     """Página de campanhas promocionais"""
-    dados = carregar_empreendimentos()
-    return render_template('campanhas.html', 
-                         campanhas=dados.get('campanhas', []),
-                         empreendimentos=dados.get('empreendimentos', []),
-                         whatsapp_daniel=WHATSAPP_DANIEL,
-                         whatsapp_vendas=WHATSAPP_VENDAS)
+    campanhas = Campanha.query.filter_by(ativo=True).order_by(Campanha.destaque.desc(), Campanha.criado_em.desc()).all()
+    return render_template('campanhas.html', campanhas=campanhas)
 
 @app.route('/vagas')
 def vagas():
     """Página de vagas disponíveis"""
     dados = carregar_empreendimentos()
     return render_template('vagas.html', 
-                         vagas=dados.get('vagas', []),
-                         whatsapp_daniel=WHATSAPP_DANIEL,
-                         whatsapp_vendas=WHATSAPP_VENDAS)
+                         vagas=dados.get('vagas', []))
 
 @app.route('/contato')
 def contato():
     """Página de contato"""
-    return render_template('contato.html',
-                         whatsapp_daniel=WHATSAPP_DANIEL,
-                         whatsapp_vendas=WHATSAPP_VENDAS)
+    return render_template('contato.html')
+
+# Números de WhatsApp (substitua pelos números reais)
+WHATSAPP_DANIEL = "5511999999999"  # Número do Daniel
+WHATSAPP_VENDAS = "5511888888888"  # Número de vendas
 
 @app.template_filter('whatsapp_link')
 def whatsapp_link_filter(numero, mensagem="Olá!"):
     """Filtro para gerar links do WhatsApp"""
     mensagem_encoded = requests.utils.quote(mensagem)
     return f"https://wa.me/{numero}?text={mensagem_encoded}"
+
+@app.route('/empreendimento/<int:id>')
+def empreendimento_detalhes(id):
+    """Página individual do empreendimento"""
+    dados = carregar_empreendimentos()
+    
+    # Buscar empreendimento pelo ID
+    empreendimento = None
+    for emp in dados['empreendimentos']:
+        if emp['id'] == id:
+            empreendimento = emp
+            break
+    
+    if not empreendimento:
+        flash('Empreendimento não encontrado.', 'error')
+        return redirect(url_for('empreendimentos'))
+    
+    # Informações do usuário logado (se existir)
+    user_info = None
+    if session.get('user_id'):
+        user = User.query.get(session['user_id'])
+        if user:
+            user_info = {
+                'nome': user.nome,
+                'email': user.email,
+                'tipo': user.tipo.value
+            }
+    
+    return render_template('empreendimento-detalhes.html', 
+                         empreendimento=empreendimento,
+                         user_info=user_info)
+
+@app.route('/suzano')
+def suzano_empreendimentos():
+    """Página específica para empreendimentos de Suzano"""
+    dados = carregar_empreendimentos()
+    
+    # Filtrar empreendimentos de Suzano
+    empreendimentos_suzano = [
+        emp for emp in dados['empreendimentos'] 
+        if 'Suzano' in emp['localizacao']
+    ]
+    
+    user_info = None
+    if session.get('user_id'):
+        user = User.query.get(session['user_id'])
+        if user:
+            user_info = {
+                'nome': user.nome,
+                'email': user.email,
+                'tipo': user.tipo.value
+            }
+    
+    return render_template('cidade-empreendimentos.html', 
+                         cidade='Suzano',
+                         empreendimentos=empreendimentos_suzano,
+                         user_info=user_info,
+                         whatsapp_cidade='5511999665544')
+
+@app.route('/mogi')
+def mogi_empreendimentos():
+    """Página específica para empreendimentos de Mogi das Cruzes"""
+    dados = carregar_empreendimentos()
+    
+    # Filtrar empreendimentos de Mogi das Cruzes
+    empreendimentos_mogi = [
+        emp for emp in dados['empreendimentos'] 
+        if 'Mogi' in emp['localizacao']
+    ]
+    
+    user_info = None
+    if session.get('user_id'):
+        user = User.query.get(session['user_id'])
+        if user:
+            user_info = {
+                'nome': user.nome,
+                'email': user.email,
+                'tipo': user.tipo.value
+            }
+    
+    return render_template('cidade-empreendimentos.html', 
+                         cidade='Mogi das Cruzes',
+                         empreendimentos=empreendimentos_mogi,
+                         user_info=user_info,
+                         whatsapp_cidade='5511999554433')
 
 @app.context_processor
 def inject_whatsapp_numbers():
@@ -167,14 +279,30 @@ def inject_whatsapp_numbers():
         'WHATSAPP_VENDAS': WHATSAPP_VENDAS
     }
 
+@app.route('/init-sample-data')
+def init_sample_data():
+    """Rota para criar dados de exemplo (apenas em desenvolvimento)"""
+    if app.config['DEBUG']:
+        try:
+            create_sample_data()
+            return jsonify({
+                'success': True, 
+                'message': 'Dados de exemplo criados com sucesso!'
+            })
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'message': f'Erro ao criar dados: {str(e)}'
+            }), 500
+    else:
+        return jsonify({
+            'success': False,
+            'message': 'Disponível apenas em modo de desenvolvimento'
+        }), 403
+
 if __name__ == '__main__':
     # Criar pastas necessárias
     os.makedirs('static/images', exist_ok=True)
     os.makedirs('data', exist_ok=True)
     
-    # Configurações do servidor
-    host = os.getenv('HOST', '0.0.0.0')
-    port = int(os.getenv('PORT', 5000))
-    debug = os.getenv('FLASK_DEBUG', 'True').lower() == 'true'
-    
-    app.run(debug=debug, host=host, port=port)
+    app.run(debug=True, host='0.0.0.0', port=5000)

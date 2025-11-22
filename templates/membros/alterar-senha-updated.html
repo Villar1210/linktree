@@ -1,0 +1,1035 @@
+{% extends "base.html" %}
+
+{% block title %}Alterar Senha - Lumiar{% endblock %}
+
+{% block extra_css %}
+<style>
+    .alterar-senha-container {
+        padding: 2rem 0;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        min-height: calc(100vh - 80px);
+    }
+
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+
+    /* Form Wrapper */
+    .form-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 200px);
+    }
+
+    .form-card {
+        width: 100%;
+        background: white;
+        border-radius: 1.5rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .form-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
+    }
+
+    /* Form Header */
+    .form-header {
+        text-align: center;
+        padding: 3rem 2rem 2rem;
+        background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+        border-bottom: 1px solid #e5e7eb;
+        position: relative;
+    }
+
+    .form-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 20px,
+            rgba(220, 38, 38, 0.02) 20px,
+            rgba(220, 38, 38, 0.02) 40px
+        );
+        animation: security-lines 30s linear infinite;
+    }
+
+    @keyframes security-lines {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .form-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .form-header h1 i {
+        color: #dc2626;
+        font-size: 1.75rem;
+    }
+
+    .form-header p {
+        color: #6b7280;
+        font-size: 1rem;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Form Styles */
+    .form {
+        padding: 2.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 2rem;
+    }
+
+    .form-group label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+    }
+
+    .form-group label i {
+        color: #dc2626;
+        font-size: 0.9rem;
+        width: 16px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 0.75rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #fafafa;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #dc2626;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
+        transform: translateY(-1px);
+    }
+
+    .form-control:valid {
+        border-color: #22c55e;
+    }
+
+    .form-group small {
+        color: #6b7280;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        display: block;
+    }
+
+    /* Form Divider */
+    .form-divider {
+        margin: 2rem 0;
+        border: none;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
+    }
+
+    /* Password Strength */
+    .senha-force {
+        margin-top: 1rem;
+    }
+
+    .force-bar {
+        height: 8px;
+        background: #e5e7eb;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+        position: relative;
+    }
+
+    .force-bar::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, 
+            transparent 0%, transparent 20%,
+            rgba(255,255,255,0.3) 20%, rgba(255,255,255,0.3) 40%,
+            transparent 40%, transparent 60%,
+            rgba(255,255,255,0.3) 60%, rgba(255,255,255,0.3) 80%,
+            transparent 80%, transparent 100%
+        );
+        animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    .force-level {
+        height: 100%;
+        width: 0;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .senha-force small {
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Requirements */
+    .requisitos {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: #f8fafc;
+        border-radius: 0.5rem;
+        border: 1px solid #e5e7eb;
+    }
+
+    .requisitos p {
+        margin: 0 0 0.75rem 0;
+        font-weight: 600;
+        color: #374151;
+        font-size: 0.9rem;
+    }
+
+    .requisito {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+    }
+
+    .requisito i {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        transition: all 0.3s ease;
+    }
+
+    .requisito {
+        color: #ef4444;
+    }
+
+    .requisito i {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .requisito-ok {
+        color: #22c55e !important;
+    }
+
+    .requisito-ok i {
+        background: #dcfce7 !important;
+        color: #16a34a !important;
+        animation: checkPulse 0.4s ease;
+    }
+
+    @keyframes checkPulse {
+        0% { transform: scale(0.8); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+    }
+
+    /* Match Indicator */
+    .match-indicator {
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .match-success {
+        background: #dcfce7;
+        border: 1px solid #a7f3d0;
+    }
+
+    .match-error {
+        background: #fee2e2;
+        border: 1px solid #fca5a5;
+    }
+
+    .match-indicator small {
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Buttons */
+    .btn {
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        border: 2px solid transparent;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #dc2626, #ef4444);
+        color: white;
+        box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+    }
+
+    .btn-primary:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .btn-outline {
+        background: transparent;
+        color: #6b7280;
+        border-color: #d1d5db;
+    }
+
+    .btn-outline:hover {
+        background: #f9fafb;
+        border-color: #9ca3af;
+        color: #374151;
+    }
+
+    .btn-lg {
+        padding: 1.25rem 2.5rem;
+        font-size: 1.1rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2.5rem;
+    }
+
+    /* Info Box */
+    .info-box {
+        margin-top: 2rem;
+        padding: 1.25rem;
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        border: 1px solid #93c5fd;
+        border-radius: 0.75rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .info-box i {
+        color: #1d4ed8;
+        font-size: 1.1rem;
+        margin-top: 0.125rem;
+        flex-shrink: 0;
+    }
+
+    .info-box p {
+        color: #1e40af;
+        margin: 0;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    /* Loading State */
+    .loading {
+        position: relative;
+        pointer-events: none;
+        opacity: 0.7;
+    }
+
+    .loading::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 20px;
+        height: 20px;
+        margin: -10px 0 0 -10px;
+        border: 2px solid white;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Security Tips */
+    .security-tips {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        border: 1px solid #f59e0b;
+        border-radius: 0.75rem;
+    }
+
+    .security-tips h4 {
+        color: #92400e;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .security-tips ul {
+        margin: 0;
+        padding-left: 1.5rem;
+    }
+
+    .security-tips li {
+        color: #78350f;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .alterar-senha-container {
+            padding: 1rem 0;
+            min-height: calc(100vh - 160px);
+        }
+
+        .container {
+            padding: 0 0.5rem;
+        }
+
+        .form-wrapper {
+            min-height: auto;
+            align-items: flex-start;
+            padding-top: 2rem;
+        }
+
+        .form-header {
+            padding: 2rem 1.5rem 1.5rem;
+        }
+
+        .form-header h1 {
+            font-size: 1.5rem;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form {
+            padding: 2rem 1.5rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .form-actions .btn {
+            justify-content: center;
+        }
+
+        .requisitos {
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+        }
+
+        .requisito {
+            font-size: 0.8rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .form-header h1 {
+            font-size: 1.25rem;
+        }
+
+        .form {
+            padding: 1.5rem 1rem;
+        }
+
+        .form-control {
+            padding: 0.875rem;
+            font-size: 0.95rem;
+        }
+
+        .btn-lg {
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+        }
+    }
+
+    /* Password Visibility Toggle */
+    .password-toggle {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #6b7280;
+        cursor: pointer;
+        padding: 0.25rem;
+        font-size: 1rem;
+        transition: color 0.3s ease;
+    }
+
+    .password-toggle:hover {
+        color: #374151;
+    }
+
+    .input-wrapper {
+        position: relative;
+    }
+
+    /* Show/Hide Password Animation */
+    .password-visible .password-toggle {
+        color: #dc2626;
+    }
+
+    /* Alert Styles */
+    .alert {
+        padding: 1rem;
+        border-radius: 0.75rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+        from { transform: translateY(-20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .alert-success {
+        background: #dcfce7;
+        color: #15803d;
+        border: 1px solid #a7f3d0;
+    }
+
+    .alert-error {
+        background: #fee2e2;
+        color: #dc2626;
+        border: 1px solid #fca5a5;
+    }
+
+    /* Password Strength Colors */
+    .strength-very-weak { background: #dc2626 !important; }
+    .strength-weak { background: #f97316 !important; }
+    .strength-medium { background: #eab308 !important; }
+    .strength-good { background: #84cc16 !important; }
+    .strength-strong { background: #22c55e !important; }
+    .strength-very-strong { 
+        background: linear-gradient(90deg, #22c55e, #16a34a) !important; 
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="alterar-senha-container">
+    <div class="container">
+        <div class="form-wrapper">
+            <div class="form-card">
+                <div class="form-header">
+                    <h1>
+                        <i class="fas fa-key"></i>
+                        <span>Alterar Senha</span>
+                    </h1>
+                    <p>Mantenha sua conta segura com uma senha forte e única</p>
+                </div>
+
+                <form method="POST" class="form" id="alterarSenhaForm">
+                    <!-- Current Password -->
+                    <div class="form-group">
+                        <label for="senha_atual">
+                            <i class="fas fa-lock"></i> Senha Atual
+                        </label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="password" 
+                                id="senha_atual" 
+                                name="senha_atual" 
+                                class="form-control" 
+                                placeholder="Digite sua senha atual" 
+                                required
+                                autocomplete="current-password"
+                            >
+                            <button type="button" class="password-toggle" data-target="senha_atual">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <small>Confirme sua identidade com a senha atual</small>
+                    </div>
+
+                    <hr class="form-divider">
+
+                    <!-- New Password -->
+                    <div class="form-group">
+                        <label for="senha_nova">
+                            <i class="fas fa-shield-alt"></i> Nova Senha
+                        </label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="password" 
+                                id="senha_nova" 
+                                name="senha_nova" 
+                                class="form-control" 
+                                placeholder="Crie uma nova senha forte" 
+                                required
+                                minlength="8"
+                                autocomplete="new-password"
+                            >
+                            <button type="button" class="password-toggle" data-target="senha_nova">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <small>Mínimo 8 caracteres com combinação de letras, números e símbolos</small>
+                        
+                        <!-- Password Strength Indicator -->
+                        <div class="senha-force" id="senhaForce" style="margin-top: 1rem;">
+                            <div class="force-bar">
+                                <div class="force-level" id="forceLevel"></div>
+                            </div>
+                            <small id="forceText">Digite uma senha</small>
+                        </div>
+
+                        <!-- Requirements Checklist -->
+                        <div class="requisitos" id="requisitos">
+                            <p><i class="fas fa-clipboard-list"></i> Requisitos de Segurança:</p>
+                            <div class="requisito" data-requisito="tamanho">
+                                <i class="fas fa-times"></i> Mínimo 8 caracteres
+                            </div>
+                            <div class="requisito" data-requisito="maiuscula">
+                                <i class="fas fa-times"></i> Uma letra maiúscula (A-Z)
+                            </div>
+                            <div class="requisito" data-requisito="minuscula">
+                                <i class="fas fa-times"></i> Uma letra minúscula (a-z)
+                            </div>
+                            <div class="requisito" data-requisito="numero">
+                                <i class="fas fa-times"></i> Um número (0-9)
+                            </div>
+                            <div class="requisito" data-requisito="especial">
+                                <i class="fas fa-times"></i> Um caractere especial (!@#$%^&*)
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="form-group">
+                        <label for="confirmar_senha">
+                            <i class="fas fa-check-double"></i> Confirmar Nova Senha
+                        </label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="password" 
+                                id="confirmar_senha" 
+                                name="confirmar_senha" 
+                                class="form-control" 
+                                placeholder="Repita a nova senha" 
+                                required
+                                autocomplete="new-password"
+                            >
+                            <button type="button" class="password-toggle" data-target="confirmar_senha">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <small>Digite a mesma senha para confirmação</small>
+                    </div>
+
+                    <!-- Match Indicator -->
+                    <div id="matchIndicator" class="match-indicator" style="display: none;">
+                        <small id="matchText"></small>
+                    </div>
+
+                    <!-- Submit Actions -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-lg" id="submitBtn" disabled>
+                            <i class="fas fa-shield-alt"></i> Alterar Senha
+                        </button>
+                        <a href="/membros/dashboard" class="btn btn-outline btn-lg">
+                            <i class="fas fa-arrow-left"></i> Voltar
+                        </a>
+                    </div>
+
+                    <!-- Security Information -->
+                    <div class="info-box">
+                        <i class="fas fa-info-circle"></i>
+                        <p>
+                            <strong>Importante:</strong> Após alterar sua senha, você será automaticamente desconectado de todos os dispositivos. 
+                            Faça login novamente com sua nova senha para continuar usando o sistema.
+                        </p>
+                    </div>
+
+                    <!-- Security Tips -->
+                    <div class="security-tips">
+                        <h4><i class="fas fa-lightbulb"></i> Dicas de Segurança</h4>
+                        <ul>
+                            <li>Use uma senha única que não seja utilizada em outros sites</li>
+                            <li>Combine letras maiúsculas e minúsculas com números e símbolos</li>
+                            <li>Evite informações pessoais como nome, data de nascimento ou palavras comuns</li>
+                            <li>Considere usar um gerenciador de senhas para maior segurança</li>
+                            <li>Altere sua senha regularmente, especialmente se suspeitar de comprometimento</li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// DOM Elements
+const senhaAtualInput = document.getElementById('senha_atual');
+const senhaNovaInput = document.getElementById('senha_nova');
+const confirmarSenhaInput = document.getElementById('confirmar_senha');
+const forceLevel = document.getElementById('forceLevel');
+const forceText = document.getElementById('forceText');
+const matchIndicator = document.getElementById('matchIndicator');
+const matchText = document.getElementById('matchText');
+const submitBtn = document.getElementById('submitBtn');
+const form = document.getElementById('alterarSenhaForm');
+
+// Password strength calculation
+function calculatePasswordStrength(password) {
+    let score = 0;
+    const requirements = {
+        tamanho: password.length >= 8,
+        maiuscula: /[A-Z]/.test(password),
+        minuscula: /[a-z]/.test(password),
+        numero: /[0-9]/.test(password),
+        especial: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\?]/.test(password)
+    };
+
+    // Calculate base score
+    Object.values(requirements).forEach(req => {
+        if (req) score++;
+    });
+
+    // Bonus points for length and complexity
+    if (password.length >= 12) score += 0.5;
+    if (password.length >= 16) score += 0.5;
+    if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\?].*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\?]/.test(password)) score += 0.5;
+
+    return { score: Math.min(score, 6), requirements };
+}
+
+// Update password strength visual indicator
+function updatePasswordStrength(password) {
+    const { score, requirements } = calculatePasswordStrength(password);
+    
+    // Strength levels and colors
+    const levels = [
+        { width: '0%', class: '', text: 'Digite uma senha' },
+        { width: '16%', class: 'strength-very-weak', text: 'Muito Fraca' },
+        { width: '33%', class: 'strength-weak', text: 'Fraca' },
+        { width: '50%', class: 'strength-medium', text: 'Média' },
+        { width: '66%', class: 'strength-good', text: 'Boa' },
+        { width: '83%', class: 'strength-strong', text: 'Forte' },
+        { width: '100%', class: 'strength-very-strong', text: 'Muito Forte' }
+    ];
+
+    const level = levels[Math.floor(score)] || levels[0];
+    
+    // Update visual indicator
+    forceLevel.style.width = level.width;
+    forceLevel.className = `force-level ${level.class}`;
+    forceText.textContent = level.text;
+    forceText.style.color = score >= 4 ? '#22c55e' : score >= 3 ? '#eab308' : '#dc2626';
+
+    // Update requirements checklist
+    Object.entries(requirements).forEach(([key, value]) => {
+        const elem = document.querySelector(`[data-requisito="${key}"]`);
+        if (elem) {
+            if (value) {
+                elem.classList.add('requisito-ok');
+                elem.querySelector('i').className = 'fas fa-check';
+            } else {
+                elem.classList.remove('requisito-ok');
+                elem.querySelector('i').className = 'fas fa-times';
+            }
+        }
+    });
+
+    return score;
+}
+
+// Check password match
+function checkPasswordMatch() {
+    const novaSenha = senhaNovaInput.value;
+    const confirmarSenha = confirmarSenhaInput.value;
+
+    if (!confirmarSenha) {
+        matchIndicator.style.display = 'none';
+        return false;
+    }
+
+    matchIndicator.style.display = 'block';
+    
+    if (novaSenha === confirmarSenha) {
+        matchIndicator.className = 'match-indicator match-success';
+        matchText.innerHTML = '<i class="fas fa-check-circle"></i> Senhas coincidem perfeitamente';
+        matchText.style.color = '#16a34a';
+        return true;
+    } else {
+        matchIndicator.className = 'match-indicator match-error';
+        matchText.innerHTML = '<i class="fas fa-times-circle"></i> Senhas não coincidem';
+        matchText.style.color = '#dc2626';
+        return false;
+    }
+}
+
+// Validate form and enable/disable submit button
+function validateForm() {
+    const currentPassword = senhaAtualInput.value;
+    const newPassword = senhaNovaInput.value;
+    const confirmPassword = confirmarSenhaInput.value;
+    
+    const strengthScore = calculatePasswordStrength(newPassword).score;
+    const passwordsMatch = checkPasswordMatch();
+    
+    const isValid = currentPassword.length > 0 && 
+                   strengthScore >= 4 && 
+                   passwordsMatch && 
+                   newPassword.length >= 8;
+    
+    submitBtn.disabled = !isValid;
+    
+    if (isValid) {
+        submitBtn.classList.remove('btn-disabled');
+    } else {
+        submitBtn.classList.add('btn-disabled');
+    }
+}
+
+// Password visibility toggle
+function setupPasswordToggle() {
+    document.querySelectorAll('.password-toggle').forEach(toggle => {
+        toggle.addEventListener('click', function() {
+            const targetId = this.dataset.target;
+            const targetInput = document.getElementById(targetId);
+            const icon = this.querySelector('i');
+            
+            if (targetInput.type === 'password') {
+                targetInput.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+                this.closest('.input-wrapper').classList.add('password-visible');
+            } else {
+                targetInput.type = 'password';
+                icon.className = 'fas fa-eye';
+                this.closest('.input-wrapper').classList.remove('password-visible');
+            }
+        });
+    });
+}
+
+// Generate strong password suggestion
+function generateStrongPassword() {
+    const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+    const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const numbers = '0123456789';
+    const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+    
+    let password = '';
+    
+    // Ensure at least one character from each category
+    password += lowercase[Math.floor(Math.random() * lowercase.length)];
+    password += uppercase[Math.floor(Math.random() * uppercase.length)];
+    password += numbers[Math.floor(Math.random() * numbers.length)];
+    password += symbols[Math.floor(Math.random() * symbols.length)];
+    
+    // Fill remaining length with random characters
+    const allChars = lowercase + uppercase + numbers + symbols;
+    for (let i = 4; i < 16; i++) {
+        password += allChars[Math.floor(Math.random() * allChars.length)];
+    }
+    
+    // Shuffle the password
+    return password.split('').sort(() => Math.random() - 0.5).join('');
+}
+
+// Show alert message
+function showAlert(message, type = 'success') {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type}`;
+    alertDiv.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i>
+        ${message}
+    `;
+    
+    const form = document.querySelector('.form');
+    form.insertBefore(alertDiv, form.firstChild);
+    
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 5000);
+}
+
+// Event listeners
+senhaNovaInput.addEventListener('input', function() {
+    updatePasswordStrength(this.value);
+    validateForm();
+});
+
+confirmarSenhaInput.addEventListener('input', function() {
+    checkPasswordMatch();
+    validateForm();
+});
+
+senhaAtualInput.addEventListener('input', validateForm);
+
+// Form submission
+form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const submitButton = submitBtn;
+    submitButton.classList.add('loading');
+    
+    // Simulate form submission
+    setTimeout(() => {
+        showAlert('Senha alterada com sucesso! Você será redirecionado para fazer login novamente.', 'success');
+        
+        setTimeout(() => {
+            window.location.href = '/auth/signin?message=senha_alterada';
+        }, 2000);
+    }, 1500);
+});
+
+// Add keyboard shortcut for password generation
+document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.shiftKey && e.key === 'G') {
+        e.preventDefault();
+        const strongPassword = generateStrongPassword();
+        
+        if (confirm(`Usar esta senha forte gerada automaticamente?\n\n${strongPassword}\n\nEla será copiada para a área de transferência.`)) {
+            senhaNovaInput.value = strongPassword;
+            confirmarSenhaInput.value = strongPassword;
+            
+            updatePasswordStrength(strongPassword);
+            checkPasswordMatch();
+            validateForm();
+            
+            // Copy to clipboard
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(strongPassword);
+                showAlert('Senha gerada e copiada para a área de transferência!', 'success');
+            }
+        }
+    }
+});
+
+// Initialize password toggles
+setupPasswordToggle();
+
+// Initial validation
+validateForm();
+
+// Add password strength tips on focus
+senhaNovaInput.addEventListener('focus', function() {
+    const tips = document.querySelector('.security-tips');
+    if (tips) {
+        tips.style.border = '2px solid #dc2626';
+        tips.style.transform = 'scale(1.02)';
+        tips.style.transition = 'all 0.3s ease';
+    }
+});
+
+senhaNovaInput.addEventListener('blur', function() {
+    const tips = document.querySelector('.security-tips');
+    if (tips) {
+        tips.style.border = '1px solid #f59e0b';
+        tips.style.transform = 'scale(1)';
+    }
+});
+
+// Auto-hide alerts
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.alert')) {
+        e.target.closest('.alert').style.animation = 'slideOut 0.3s ease forwards';
+        setTimeout(() => {
+            e.target.closest('.alert')?.remove();
+        }, 300);
+    }
+});
+</script>
+
+<style>
+@keyframes slideOut {
+    to { transform: translateY(-20px); opacity: 0; }
+}
+
+.btn-disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+</style>
+{% endblock %}
