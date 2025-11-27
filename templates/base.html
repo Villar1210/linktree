@@ -11,127 +11,89 @@
     <meta name="description" content="Empreendimentos Lumiar - Imóveis de qualidade com localização privilegiada">
     <meta name="author" content="Construtora Lumiar">
 </head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <h1>🏗️ Lumiar</h1>
-                    <span>Construindo sonhos</span>
-                </div>
-                <nav class="nav">
-                    <a href="/" class="nav-link">Início</a>
-                    <a href="/empreendimentos" class="nav-link">Empreendimentos</a>
-                    <a href="/contato" class="nav-link">Contato</a>
-                    <a href="/admin/dashboard" class="nav-link" style="font-weight:600; color:#1e40af;">Painel Administrativo</a>
-                    <!-- Área do Membro -->
-                    <div class="nav-dropdown">
-                        {% if session.user_id %}
-                            <a href="#" class="nav-link dropdown-toggle">
-                                👤 {{ session.user_name or 'Minha Área' }}
-                            </a>
-                            <div class="dropdown-menu">
-                                <a href="/auth/profile" class="dropdown-item">
-                                    <span class="dropdown-icon">👤</span>
-                                    Meu Perfil
-                                </a>
-                                {% if session.user_type == 'admin' %}
-                                    <a href="/admin/dashboard" class="dropdown-item">
-                                        <span class="dropdown-icon">⚙️</span>
-                                        Painel Admin
-                                    </a>
-                                {% elif session.user_type == 'corretor' %}
-                                    <a href="/corretor/dashboard" class="dropdown-item">
-                                        <span class="dropdown-icon">💼</span>
-                                        Dashboard
-                                    </a>
-                                {% elif session.user_type == 'imobiliaria' %}
-                                    <a href="/imobiliaria/dashboard" class="dropdown-item">
-                                        <span class="dropdown-icon">🏢</span>
-                                        Painel Imobiliária
-                                    </a>
-                                {% elif session.user_type == 'cliente' %}
-                                    <a href="/cliente/dashboard" class="dropdown-item">
-                                        <span class="dropdown-icon">🏠</span>
-                                        Meus Favoritos
-                                    </a>
-                                {% endif %}
-                                <hr class="dropdown-divider">
-                                <a href="/auth/logout" class="dropdown-item logout">
-                                    <span class="dropdown-icon">🚪</span>
-                                    Sair
-                                </a>
-                            </div>
-                        {% else %}
-                            <a href="#" class="nav-link dropdown-toggle">
-                                👤 Área do Membro
-                            </a>
-                            <div class="dropdown-menu">
-                                <a href="/auth/login" class="dropdown-item">
-                                    <span class="dropdown-icon">🔑</span>
-                                    Fazer Login
-                                </a>
-                                <a href="/auth/register" class="dropdown-item">
-                                    <span class="dropdown-icon">📝</span>
-                                    Criar Conta
-                                </a>
-                                <hr class="dropdown-divider">
-                                <div class="dropdown-info">
-                                    <small>Cadastre-se como:</small>
-                                </div>
-                                <a href="/auth/register/cliente" class="dropdown-item small">
-                                    <span class="dropdown-icon">👤</span>
-                                    Cliente
-                                </a>
-                                <a href="/auth/register/corretor" class="dropdown-item small">
-                                    <span class="dropdown-icon">💼</span>
-                                    Corretor
-                                </a>
-                                <a href="/auth/register/imobiliaria" class="dropdown-item small">
-                                    <span class="dropdown-icon">🏢</span>
-                                    Imobiliária
-                                </a>
-                            </div>
-                        {% endif %}
-                    </div>
+
+    <body class="fb-theme">
+        <!-- Facebook-style Header -->
+        <header class="fb-header">
+            <div class="fb-header-left">
+                <span class="fb-logo">🏠</span>
+                <span class="fb-title">Lumiar Imóveis</span>
+            </div>
+            <div class="fb-header-center">
+                <input type="text" class="fb-search" placeholder="Buscar imóveis, cidades, bairros...">
+            </div>
+            <div class="fb-header-right">
+                <nav class="fb-nav">
+                    <a href="/" class="fb-nav-link">Início</a>
+                    <a href="/empreendimentos" class="fb-nav-link">Empreendimentos</a>
+                    <a href="/contato" class="fb-nav-link">Contato</a>
+                    <a href="/admin/dashboard" class="fb-nav-link">Painel Admin</a>
                 </nav>
+                <div class="fb-profile-dropdown">
+                    {% if session.user_id %}
+                        <span class="fb-profile-name">👤 {{ session.user_name or 'Minha Área' }}</span>
+                        <div class="fb-profile-menu">
+                            <a href="/auth/profile">Meu Perfil</a>
+                            {% if session.user_type == 'admin' %}
+                                <a href="/admin/dashboard">Painel Admin</a>
+                            {% elif session.user_type == 'corretor' %}
+                                <a href="/corretor/dashboard">Dashboard Corretor</a>
+                            {% elif session.user_type == 'imobiliaria' %}
+                                <a href="/imobiliaria/dashboard">Painel Imobiliária</a>
+                            {% elif session.user_type == 'cliente' %}
+                                <a href="/cliente/dashboard">Meus Favoritos</a>
+                            {% endif %}
+                            <a href="/auth/logout" class="fb-logout">Sair</a>
+                        </div>
+                    {% else %}
+                        <span class="fb-profile-name">👤 Área do Membro</span>
+                        <div class="fb-profile-menu">
+                            <a href="/auth/login">Fazer Login</a>
+                            <a href="/auth/register">Criar Conta</a>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <!-- Main Content -->
-    <main class="main">
-        {% block content %}{% endblock %}
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-info">
-                    <h3>Construtora Lumiar</h3>
-                    <p>Construindo o futuro com qualidade e inovação</p>
-                </div>
-                <div class="footer-contact">
-                    <h4>Contato</h4>
-                    <p>📧 contato@lumiar.com.br</p>
-                    <p>📱 (11) 99999-9999</p>
-                </div>
-                <div class="footer-social">
-                    <h4>Redes Sociais</h4>
-                    <div class="social-links">
-                        <a href="https://wa.me/{{ WHATSAPP_DANIEL }}?text=Olá! Vim do site da Lumiar" target="_blank" class="social-link whatsapp">
-                            💬 WhatsApp
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 Construtora Lumiar. Todos os direitos reservados.</p>
-            </div>
+        <div class="fb-layout">
+            <!-- Sidebar Facebook-style -->
+            <aside class="fb-sidebar">
+                <nav class="fb-sidebar-nav">
+                    <a href="/" class="fb-sidebar-link">🏠 Início</a>
+                    <a href="/empreendimentos" class="fb-sidebar-link">🏢 Empreendimentos</a>
+                    <a href="/contato" class="fb-sidebar-link">📞 Contato</a>
+                    <a href="/admin/dashboard" class="fb-sidebar-link">⚙️ Painel Admin</a>
+                </nav>
+            </aside>
+            <main class="fb-main">
+                {% block content %}{% endblock %}
+            </main>
         </div>
-    </footer>
+
+        <footer class="fb-footer">
+            <div class="fb-footer-content">
+                <span>&copy; 2024 Lumiar Imóveis. Todos os direitos reservados.</span>
+                <span>Contato: contato@lumiar.com.br | (11) 99999-9999</span>
+            </div>
+        </footer>
+
+        <script>
+        // Dropdown Facebook-style
+        document.addEventListener('DOMContentLoaded', function() {
+            const profile = document.querySelector('.fb-profile-dropdown');
+            if (profile) {
+                profile.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    profile.classList.toggle('active');
+                });
+                document.addEventListener('click', function() {
+                    profile.classList.remove('active');
+                });
+            }
+        });
+        </script>
+    </body>
 
     <script>
         // 🚀 iVillar Linktree - Dropdown Functionality
