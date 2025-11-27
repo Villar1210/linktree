@@ -1,166 +1,115 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LuxeEstate Pro</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS via CDN for quick preview fallback, but postcss/tailwind config will take over in build -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              serif: ['Playfair Display', 'serif'],
+            },
+            colors: {
+              brand: {
+                50: '#f0f9ff',
+                100: '#e0f2fe',
+                500: '#0ea5e9',
+                600: '#0284c7',
+                800: '#075985',
+                900: '#0c4a6e',
+              },
+              dark: {
+                900: '#0f172a',
+                800: '#1e293b',
+              }
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.8s ease-out forwards',
+              'slide-up': 'slideUp 0.8s ease-out forwards',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              slideUp: {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1; 
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8; 
+      }
 
-{% block title %}Lumiar - Página Inicial{% endblock %}
-
-{% block content %}
-<div class="container">
-    <!-- User Welcome Section (if logged in) -->
-    {% if user_info %}
-    <section class="user-welcome">
-        <div class="welcome-card">
-            <div class="welcome-content">
-                <h2 class="welcome-title">👋 Olá, {{ user_info.nome }}!</h2>
-                <p class="welcome-subtitle">
-                    {% if user_info.tipo == 'cliente' %}
-                        Encontre o imóvel dos seus sonhos
-                    {% elif user_info.tipo == 'corretor' %}
-                        Gerencie seus leads e vendas
-                    {% elif user_info.tipo == 'imobiliaria' %}
-                        Administre sua equipe e portfólio
-                    {% elif user_info.tipo == 'admin' %}
-                        Controle total da plataforma
-                    {% endif %}
-                </p>
-            </div>
-            <div class="welcome-actions">
-                {% if user_info.tipo == 'admin' %}
-                    <a href="{{ url_for('admin.dashboard') }}" class="btn-dashboard">
-                        <span class="btn-icon">⚙️</span>
-                        Painel Admin
-                    </a>
-                {% elif user_info.tipo == 'corretor' %}
-                    <a href="{{ url_for('corretor.dashboard') }}" class="btn-dashboard">
-                        <span class="btn-icon">💼</span>
-                        Meu Dashboard
-                    </a>
-                {% elif user_info.tipo == 'imobiliaria' %}
-                    <a href="{{ url_for('imobiliaria.dashboard') }}" class="btn-dashboard">
-                        <span class="btn-icon">🏢</span>
-                        Painel Imobiliária
-                    </a>
-                {% elif user_info.tipo == 'cliente' %}
-                    <a href="{{ url_for('cliente.dashboard') }}" class="btn-dashboard">
-                        <span class="btn-icon">🏠</span>
-                        Meus Favoritos
-                    </a>
-                {% endif %}
-            </div>
-        </div>
-    </section>
-    {% endif %}
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1 class="hero-title">🏗️ Construtora Lumiar</h1>
-            <p class="hero-subtitle">
-                {% if user_info %}
-                    Seja bem-vindo(a) de volta! Confira nossos empreendimentos exclusivos.
-                {% else %}
-                    Empreendimentos de qualidade em localização privilegiada
-                {% endif %}
-            </p>
-            <div class="hero-stats">
-                <div class="stat">
-                    <span class="stat-number">{{ dados.empreendimentos|length }}</span>
-                    <span class="stat-label">Empreendimentos</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-number">15+</span>
-                    <span class="stat-label">Anos no Mercado</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-number">500+</span>
-                    <span class="stat-label">Famílias Atendidas</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Main Actions -->
-    <section class="main-actions">
-        <div class="actions-grid">
-            <!-- Empreendimentos Disponíveis -->
-            <a href="/empreendimentos" class="action-card primary">
-                <div class="card-icon">🏠</div>
-                <h3>Empreendimentos Disponíveis</h3>
-                <p>Veja todos os nossos lançamentos e imóveis prontos</p>
-                <span class="card-count">{{ dados.empreendimentos|length }} disponíveis</span>
-            </a>
-
-            <!-- Obras em Andamento -->
-            <a href="/empreendimentos?status=obras" class="action-card secondary">
-                <div class="card-icon">🚧</div>
-                <h3>Obras em Andamento</h3>
-                <p>Acompanhe o progresso dos nossos projetos</p>
-                <span class="card-status">Em construção</span>
-            </a>
-
-            <!-- Campanhas Relâmpago -->
-            <a href="/campanhas" class="action-card highlight">
-                <div class="card-icon">⚡</div>
-                <h3>Campanhas Relâmpago</h3>
-                <p>Ofertas especiais por tempo limitado</p>
-                <span class="card-offer">Até 15% OFF</span>
-            </a>
-
-            <!-- Vagas para Corretores -->
-            <a href="/vagas" class="action-card success">
-                <div class="card-icon">💼</div>
-                <h3>Vagas para Corretores</h3>
-                <p>Junte-se à nossa equipe de vendas</p>
-                <span class="card-badge">Oportunidade</span>
-            </a>
-        </div>
-    </section>
-
-    <!-- WhatsApp Contact -->
-    <section class="whatsapp-section">
-        <div class="whatsapp-card">
-            <div class="whatsapp-content">
-                <div class="whatsapp-icon">💬</div>
-                <div class="whatsapp-text">
-                    <h3>Fale com Daniel</h3>
-                    <p>Gerente Comercial - Tire suas dúvidas diretamente comigo!</p>
-                </div>
-            </div>
-            <a href="{{ WHATSAPP_DANIEL|whatsapp_link('Olá Daniel! Vim do site da Lumiar e gostaria de mais informações sobre os empreendimentos.') }}" 
-               target="_blank" 
-               class="whatsapp-button">
-                Conversar no WhatsApp
-            </a>
-        </div>
-    </section>
-
-    <!-- Quick Contact -->
-    <section class="quick-contact">
-        <h2>Contato Rápido</h2>
-        <div class="contact-grid">
-            <a href="{{ WHATSAPP_VENDAS|whatsapp_link('Olá! Gostaria de informações sobre apartamentos.') }}" 
-               target="_blank" 
-               class="contact-item">
-                <span class="contact-icon">🏠</span>
-                <span>Apartamentos</span>
-            </a>
-            <a href="{{ WHATSAPP_VENDAS|whatsapp_link('Olá! Tenho interesse em casas.') }}" 
-               target="_blank" 
-               class="contact-item">
-                <span class="contact-icon">🏘️</span>
-                <span>Casas</span>
-            </a>
-            <a href="{{ WHATSAPP_VENDAS|whatsapp_link('Olá! Quero saber sobre coberturas.') }}" 
-               target="_blank" 
-               class="contact-item">
-                <span class="contact-icon">🏢</span>
-                <span>Coberturas</span>
-            </a>
-            <a href="{{ WHATSAPP_DANIEL|whatsapp_link('Olá Daniel! Gostaria de trabalhar como corretor na Lumiar.') }}" 
-               target="_blank" 
-               class="contact-item">
-                <span class="contact-icon">💼</span>
-                <span>Seja Corretor</span>
-            </a>
-        </div>
-    </section>
-</div>
-{% endblock %}
+      /* Hide Scrollbar util */
+      .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .hide-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      
+      .glass {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+    </style>
+    
+    <!-- Import Map for Preview Environment (Optional for Local if using Vite) -->
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.2.0",
+    "react/jsx-runtime": "https://esm.sh/react@18.2.0/jsx-runtime",
+    "react-dom": "https://esm.sh/react-dom@18.2.0?external=react",
+    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client?external=react",
+    "react-router-dom": "https://esm.sh/react-router-dom@6.22.3?external=react,react-dom",
+    "lucide-react": "https://esm.sh/lucide-react@0.358.0?external=react",
+    "recharts": "https://esm.sh/recharts@2.12.3?external=react,react-dom",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "vite": "https://aistudiocdn.com/vite@^7.2.4",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1"
+  }
+}
+</script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-gray-50 text-gray-900 overflow-x-hidden">
+    <div id="root"></div>
+    <!-- Vite Entry Point -->
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
