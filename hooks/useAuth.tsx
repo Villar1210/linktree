@@ -8,6 +8,7 @@ interface AuthContextType {
     loading: boolean;
     signUp: (data: SignUpData) => Promise<{ error: unknown }>;
     signIn: (credentials: AuthCredentials) => Promise<{ error: unknown }>;
+    signInWithGithub: () => Promise<{ error: unknown }>;
     signOut: () => Promise<void>;
     updateProfile: (updates: Partial<User>) => Promise<{ error: unknown }>;
 }
@@ -72,6 +73,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { error };
     };
 
+    const signInWithGithub = async () => {
+        const { error } = await authService.signInWithGithub();
+        // User profile loading happens on 'onAuthStateChange' (SIGNED_IN) automatically
+        // but we can return the error.
+        return { error };
+    };
+
     const signOut = async () => {
         await authService.signOut();
         setUser(null);
@@ -92,6 +100,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         loading,
         signUp,
         signIn,
+        signInWithGithub,
         signOut,
         updateProfile,
     };

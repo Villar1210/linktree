@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Building2, ArrowRight } from 'lucide-react';
+import { Building2, ArrowRight, Github } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import toast from 'react-hot-toast';
 
@@ -9,7 +9,7 @@ const BuyerLogin: React.FC = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
-  const { signIn, loading } = useAuth();
+  const { signIn, signInWithGithub, loading } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,6 +88,20 @@ const BuyerLogin: React.FC = () => {
               className="w-full bg-brand-900 text-white py-4 rounded-xl font-bold hover:bg-brand-800 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Entrando...' : <>Entrar na Plataforma <ArrowRight size={20} /></>}
+            </button>
+
+            <button
+              type="button"
+              onClick={async () => {
+                const { error } = await signInWithGithub();
+                if (error) {
+                  toast.error('Erro ao conectar com GitHub');
+                  console.error(error);
+                }
+              }}
+              className="w-full bg-gray-900 text-white py-4 rounded-xl font-bold hover:bg-black transition-colors flex items-center justify-center gap-2"
+            >
+              <Github size={20} /> Entrar com GitHub
             </button>
           </form>
 

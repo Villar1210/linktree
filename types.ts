@@ -128,6 +128,8 @@ export interface Lead {
   email: string;
   phone: string;
   status: LeadStatus;
+  funnel_id?: string; // New: Dynamic Funnel
+  stage_id?: string;  // New: Dynamic Stage
   interest: string;
   notes: string[]; // Legacy simple notes
   tasks: Task[]; // New: Task Management (Activities)
@@ -135,20 +137,20 @@ export interface Lead {
   createdAt: string;
   source: 'site' | 'whatsapp' | 'instagram' | 'facebook' | 'indication' | 'portal';
   value?: number;
-  
+
   // CRM Intelligence
   temperature?: 'hot' | 'warm' | 'cold'; // hot=compra em 30d, warm=90d, cold=curioso
   lastInteraction?: string; // ISO date
   probability?: number; // 0-100%
   assignedTo?: string; // agent id (User ID)
   lostReason?: string; // Motivo da perda (se status for LOST ou DISQUALIFIED)
-  
+
   // Enterprise Features
   score?: number; // 0-100 Lead Scoring
   documents?: LeadDocument[]; // GED
   enrichedData?: LeadEnrichedData; // Data Enrichment
   scriptData?: Record<string, boolean>; // Persistência do roteiro de perguntas (Question Text -> Checked)
-  
+
   // Detailed Registration (Cadastro Completo)
   profile?: LeadProfile;
   address?: LeadAddress;

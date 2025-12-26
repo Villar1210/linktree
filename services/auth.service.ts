@@ -68,6 +68,24 @@ export const authService = {
     },
 
     /**
+     * Sign in with GitHub
+     */
+    async signInWithGithub() {
+        try {
+            const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: 'github',
+                options: {
+                    redirectTo: `${window.location.origin}/buyer/dashboard`,
+                },
+            });
+            if (error) throw error;
+            return { data, error: null };
+        } catch (error) {
+            return { data: null, error };
+        }
+    },
+
+    /**
      * Sign out the current user
      */
     async signOut() {
