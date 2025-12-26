@@ -747,11 +747,9 @@ const CRM: React.FC = () => {
             temperature: 'warm',
             // funnel_id: activeFunnel?.id // Should add this if we have active funnel
         };
-        if (activeFunnel) {
-            // Find first stage
-            // We'd need 'stages' from useFunnelStore here to do it perfectly.
-            // For now, let backend default or store handle it.
+        if (activeFunnel && stages.length > 0) {
             (newLead as any).funnel_id = activeFunnel.id;
+            (newLead as any).stage_id = stages[0].id;
         }
 
         await addDeal(newLead as any);
@@ -872,153 +870,139 @@ const CRM: React.FC = () => {
                         {newLeadsInbox.length === 0 && (
                             <div className="flex flex-col items-center justify-center h-64 text-gray-400">
                                 <CheckCircle size={48} className="mb-4 text-green-200" />
-                                <p>Caixa de entrada limpa!</p>
-                                <p className="text-xs">Bom trabalho.</p>
+                                {/* PIPELINE MODE (Updated Columns) */}
+                                {viewMode === 'pipeline' && (
+                                    <div className="flex-1 overflow-hidden">
+                                        <KanbanBoard onDealClick={setSelectedLead} deals={visibleLeads} />
+                                    </div>
+                                )}
+                                <LeadColumn
+                                    status={LeadStatus.PROPOSAL}
+                                    title="Proposta"
+                                    color="border-amber-500"
+                                    leads={visibleLeads}
+                                    onDrop={handleDropLead}
+                                    onDragStart={handleDragStart}
+                                    onLeadClick={setSelectedLead}
+                                />
+                                <LeadColumn
+                                    status={LeadStatus.NEGOTIATION}
+                                    title="Negociação"
+                                    color="border-orange-500"
+                                    leads={visibleLeads}
+                                    onDrop={handleDropLead}
+                                    onDragStart={handleDragStart}
+                                    onLeadClick={setSelectedLead}
+                                />
+                                <LeadColumn
+                                    status={LeadStatus.CLOSED}
+                                    title="Vendido"
+                                    color="border-green-500 bg-green-50/30"
+                                    leads={visibleLeads}
+                                    onDrop={handleDropLead}
+                                    onDragStart={handleDragStart}
+                                    onLeadClick={setSelectedLead}
+                                />
+                                <div className="w-px bg-gray-300 mx-2"></div>
+                                <LeadColumn
+                                    status={LeadStatus.DISQUALIFIED}
+                                    title="Não Qualificado"
+                                    color="border-gray-400 bg-gray-100/50 opacity-80"
+                                    leads={visibleLeads}
+                                    onDrop={handleDropLead}
+                                    onDragStart={handleDragStart}
+                                    onLeadClick={setSelectedLead}
+                                />
+                                <LeadColumn
+                                    status={LeadStatus.LOST}
+                                    title="Perdidos"
+                                    color="border-red-300 bg-red-50/30 opacity-80"
+                                    leads={visibleLeads}
+                                    onDrop={handleDropLead}
+                                    onDragStart={handleDragStart}
+                                    onLeadClick={setSelectedLead}
+                                />
                             </div>
-                        )}
-                    </div>
-                </div>
-            )}
-
-            {/* PIPELINE MODE (Updated Columns) */}
-            {viewMode === 'pipeline' && (
-              />
-                < LeadColumn 
-                status={LeadStatus.VISIT_SCHEDULED}
-            title="Visita Agendada"
-            color="border-purple-500"
-            leads={visibleLeads}
-            onDrop={handleDropLead}
-            onDragStart={handleDragStart}
-            onLeadClick={setSelectedLead}
-              />
-            <LeadColumn
-                status={LeadStatus.PROPOSAL}
-                title="Proposta"
-                color="border-amber-500"
-                leads={visibleLeads}
-                onDrop={handleDropLead}
-                onDragStart={handleDragStart}
-                onLeadClick={setSelectedLead}
-            />
-            <LeadColumn
-                status={LeadStatus.NEGOTIATION}
-                title="Negociação"
-                color="border-orange-500"
-                leads={visibleLeads}
-                onDrop={handleDropLead}
-                onDragStart={handleDragStart}
-                onLeadClick={setSelectedLead}
-            />
-            <LeadColumn
-                status={LeadStatus.CLOSED}
-                title="Vendido"
-                color="border-green-500 bg-green-50/30"
-                leads={visibleLeads}
-                onDrop={handleDropLead}
-                onDragStart={handleDragStart}
-                onLeadClick={setSelectedLead}
-            />
-            <div className="w-px bg-gray-300 mx-2"></div>
-            <LeadColumn
-                status={LeadStatus.DISQUALIFIED}
-                title="Não Qualificado"
-                color="border-gray-400 bg-gray-100/50 opacity-80"
-                leads={visibleLeads}
-                onDrop={handleDropLead}
-                onDragStart={handleDragStart}
-                onLeadClick={setSelectedLead}
-            />
-            <LeadColumn
-                status={LeadStatus.LOST}
-                title="Perdidos"
-                color="border-red-300 bg-red-50/30 opacity-80"
-                leads={visibleLeads}
-                onDrop={handleDropLead}
-                onDragStart={handleDragStart}
-                onLeadClick={setSelectedLead}
-            />
-        </div>
           </div >
       )}
 
-{/* New Lead Modal (Unchanged) */ }
-{
-    isModalOpen && (
-        <div className="absolute inset-0 z-50 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl">
-                <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-xl font-bold text-gray-900">Novo Negócio</h3>
-                    <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600"><X size={24} /></button>
-                </div>
-                <form onSubmit={handleAddLead} className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">Nome do Contato</label>
-                        <input type="text" className="w-full border rounded-lg px-3 py-2" placeholder="Nome" required />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">Telefone</label>
-                        <input type="text" className="w-full border rounded-lg px-3 py-2" placeholder="(00) 00000-0000" required />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">Imóvel de Interesse</label>
-                        <input type="text" className="w-full border rounded-lg px-3 py-2" placeholder="Ex: Apartamento Centro" />
-                    </div>
-                    <button className="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700">Criar Negócio</button>
-                </form>
-            </div>
-        </div>
-    )
-}
+                    {/* New Lead Modal (Unchanged) */}
+                    {
+                        isModalOpen && (
+                            <div className="absolute inset-0 z-50 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+                                <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl">
+                                    <div className="flex justify-between items-center mb-6">
+                                        <h3 className="text-xl font-bold text-gray-900">Novo Negócio</h3>
+                                        <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600"><X size={24} /></button>
+                                    </div>
+                                    <form onSubmit={handleAddLead} className="space-y-4">
+                                        <div>
+                                            <label className="block text-sm font-bold text-gray-700 mb-1">Nome do Contato</label>
+                                            <input type="text" className="w-full border rounded-lg px-3 py-2" placeholder="Nome" required />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-bold text-gray-700 mb-1">Telefone</label>
+                                            <input type="text" className="w-full border rounded-lg px-3 py-2" placeholder="(00) 00000-0000" required />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-bold text-gray-700 mb-1">Imóvel de Interesse</label>
+                                            <input type="text" className="w-full border rounded-lg px-3 py-2" placeholder="Ex: Apartamento Centro" />
+                                        </div>
+                                        <button className="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700">Criar Negócio</button>
+                                    </form>
+                                </div>
+                            </div>
+                        )
+                    }
 
-{/* Loss Reason Modal (Required for Lost/Disqualified) */ }
-{
-    lossModalOpen && (
-        <div className="absolute inset-0 z-50 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
-            <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl border-2 border-red-100">
-                <div className="text-center mb-6">
-                    <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3 text-red-500">
-                        <AlertTriangle size={24} />
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900">Motivo da Perda</h3>
-                    <p className="text-sm text-gray-500">Por que este negócio não avançou?</p>
-                </div>
+                    {/* Loss Reason Modal (Required for Lost/Disqualified) */}
+                    {
+                        lossModalOpen && (
+                            <div className="absolute inset-0 z-50 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
+                                <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl border-2 border-red-100">
+                                    <div className="text-center mb-6">
+                                        <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3 text-red-500">
+                                            <AlertTriangle size={24} />
+                                        </div>
+                                        <h3 className="text-xl font-bold text-gray-900">Motivo da Perda</h3>
+                                        <p className="text-sm text-gray-500">Por que este negócio não avançou?</p>
+                                    </div>
 
-                <div className="space-y-2 mb-6">
-                    {LOSS_REASONS.map(reason => (
-                        <label key={reason} className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-                            <input
-                                type="radio"
-                                name="lossReason"
-                                className="text-brand-600 focus:ring-brand-500"
-                                checked={selectedLossReason === reason}
-                                onChange={() => setSelectedLossReason(reason)}
+                                    <div className="space-y-2 mb-6">
+                                        {LOSS_REASONS.map(reason => (
+                                            <label key={reason} className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                                                <input
+                                                    type="radio"
+                                                    name="lossReason"
+                                                    className="text-brand-600 focus:ring-brand-500"
+                                                    checked={selectedLossReason === reason}
+                                                    onChange={() => setSelectedLossReason(reason)}
+                                                />
+                                                <span className="text-sm font-medium text-gray-700">{reason}</span>
+                                            </label>
+                                        ))}
+                                    </div>
+
+                                    <div className="flex gap-3">
+                                        <button onClick={() => setLossModalOpen(false)} className="flex-1 py-2 border border-gray-300 rounded-lg font-bold text-gray-600 hover:bg-gray-50">Cancelar</button>
+                                        <button onClick={confirmLoss} className="flex-1 py-2 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700">Confirmar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    }
+
+                    {
+                        selectedLead && (
+                            <LeadDetailModal
+                                lead={selectedLead}
+                                onClose={() => setSelectedLead(null)}
+                                onUpdate={handleLeadUpdate}
                             />
-                            <span className="text-sm font-medium text-gray-700">{reason}</span>
-                        </label>
-                    ))}
-                </div>
-
-                <div className="flex gap-3">
-                    <button onClick={() => setLossModalOpen(false)} className="flex-1 py-2 border border-gray-300 rounded-lg font-bold text-gray-600 hover:bg-gray-50">Cancelar</button>
-                    <button onClick={confirmLoss} className="flex-1 py-2 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700">Confirmar</button>
-                </div>
-            </div>
-        </div>
-    )
-}
-
-{
-    selectedLead && (
-        <LeadDetailModal
-            lead={selectedLead}
-            onClose={() => setSelectedLead(null)}
-            onUpdate={handleLeadUpdate}
-        />
-    )
-}
-    </div >
-  );
+                        )
+                    }
+                </div >
+            );
 };
 
-export default CRM;
+            export default CRM;

@@ -120,6 +120,8 @@ export const authService = {
                 data: { user: authUser },
             } = await supabase.auth.getUser();
 
+            console.log('getCurrentUser authUser:', authUser?.id);
+
             if (!authUser) {
                 return { data: null, error: null };
             }

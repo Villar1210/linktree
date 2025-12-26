@@ -58,19 +58,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     const signUp = async (data: SignUpData) => {
-        const { error } = await authService.signUp(data);
-        if (!error) {
-            await loadUserProfile();
+        setLoading(true);
+        try {
+            const { error } = await authService.signUp(data);
+            if (!error) {
+                await loadUserProfile();
+            } else {
+                setLoading(false);
+            }
+            return { error };
+        } catch (error) {
+            setLoading(false);
+            return { error };
         }
-        return { error };
     };
 
     const signIn = async (credentials: AuthCredentials) => {
-        const { error } = await authService.signIn(credentials);
-        if (!error) {
-            await loadUserProfile();
+        setLoading(true);
+        try {
+            const { error } = await authService.signIn(credentials);
+            if (!error) {
+                await loadUserProfile();
+            } else {
+                setLoading(false);
+            }
+            return { error };
+        } catch (error) {
+            setLoading(false);
+            return { error };
         }
-        return { error };
     };
 
     const signInWithGithub = async () => {
