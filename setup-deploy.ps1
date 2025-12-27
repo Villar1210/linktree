@@ -33,15 +33,15 @@ Write-Host "`n📋 Etapa 1: Verificando chave SSH..." -ForegroundColor Yellow
 
 if (Test-Path $PRIVATE_KEY) {
     Write-Host "✅ Chave SSH já existe: $PRIVATE_KEY" -ForegroundColor Green
-} else {
+}
+else {
     Write-Host "❌ Chave SSH não encontrada!" -ForegroundColor Red
     Write-Host "Execute primeiro: ssh-keygen -t rsa -b 4096 -C 'deploy@linktree' -f '$PRIVATE_KEY' -N ''" -ForegroundColor Yellow
     exit 1
 }
 
-# Ler chaves
+# Ler chave pública
 $publicKeyContent = Get-Content $PUBLIC_KEY -Raw
-$privateKeyContent = Get-Content $PRIVATE_KEY -Raw
 
 Write-Host "✅ Chaves SSH carregadas" -ForegroundColor Green
 
@@ -75,8 +75,8 @@ echo 'Chave SSH adicionada com sucesso!'
     Write-Host "📤 Enviando chave pública para VPS..." -ForegroundColor Cyan
     
     try {
-        # Executar script na VPS
-        ssh -o StrictHostKeyChecking=no "$VPS_USER@$VPS_HOST" "bash -s" < $tempScript
+        # Executar script na VPS usando Get-Content
+        Get-Content $tempScript | ssh -o StrictHostKeyChecking=no "$VPS_USER@$VPS_HOST" "bash -s"
         Write-Host "✅ Chave pública adicionada na VPS com sucesso!" -ForegroundColor Green
         
         # Testar conexão
@@ -91,7 +91,8 @@ echo 'Chave SSH adicionada com sucesso!'
     finally {
         Remove-Item $tempScript -ErrorAction SilentlyContinue
     }
-} else {
+}
+else {
     Write-Host "`n⏭️  Pulando configuração da VPS (use -SkipVPS:$false para incluir)" -ForegroundColor Gray
 }
 
@@ -106,7 +107,7 @@ if (-not $SkipGitHub) {
         Write-Host "✅ GitHub CLI encontrado" -ForegroundColor Green
         
         # Verificar autenticação
-        $ghAuth = gh auth status 2>&1
+        gh auth status 2>&1 | Out-Null
         if ($LASTEXITCODE -eq 0) {
             Write-Host "✅ Autenticado no GitHub" -ForegroundColor Green
             
@@ -115,11 +116,11 @@ if (-not $SkipGitHub) {
                 
                 # Adicionar VPS_HOST
                 Write-Host "  → Adicionando VPS_HOST..." -ForegroundColor Gray
-                echo $VPS_HOST | gh secret set VPS_HOST -R Villar1210/linktree
+                Write-Output $VPS_HOST | gh secret set VPS_HOST -R Villar1210/linktree
                 
                 # Adicionar VPS_USER
                 Write-Host "  → Adicionando VPS_USER..." -ForegroundColor Gray
-                echo $VPS_USER | gh secret set VPS_USER -R Villar1210/linktree
+                Write-Output $VPS_USER | gh secret set VPS_USER -R Villar1210/linktree
                 
                 # Adicionar VPS_SSH_KEY
                 Write-Host "  → Adicionando VPS_SSH_KEY..." -ForegroundColor Gray
@@ -131,13 +132,15 @@ if (-not $SkipGitHub) {
                 Write-Host "❌ Erro ao adicionar secrets: $_" -ForegroundColor Red
                 Write-Host "Adicione manualmente em: https://github.com/Villar1210/linktree/settings/secrets/actions" -ForegroundColor Yellow
             }
-        } else {
+        }
+        else {
             Write-Host "❌ Não autenticado no GitHub CLI" -ForegroundColor Red
             Write-Host "Execute: gh auth login" -ForegroundColor Yellow
             Write-Host "Ou adicione os secrets manualmente em:" -ForegroundColor Yellow
             Write-Host "https://github.com/Villar1210/linktree/settings/secrets/actions" -ForegroundColor Cyan
         }
-    } else {
+    }
+    else {
         Write-Host "⚠️  GitHub CLI não encontrado" -ForegroundColor Yellow
         Write-Host "Instale com: winget install GitHub.cli" -ForegroundColor Cyan
         Write-Host "`nOu adicione os secrets manualmente:" -ForegroundColor Yellow
@@ -147,7 +150,8 @@ if (-not $SkipGitHub) {
         Write-Host "  VPS_USER = $VPS_USER" -ForegroundColor Gray
         Write-Host "  VPS_SSH_KEY = (conteúdo de $PRIVATE_KEY)" -ForegroundColor Gray
     }
-} else {
+}
+else {
     Write-Host "`n⏭️  Pulando configuração do GitHub (use -SkipGitHub:$false para incluir)" -ForegroundColor Gray
 }
 
@@ -172,10 +176,12 @@ if (Test-Path $sshConfigFile) {
     if ($currentConfig -notmatch "Host linktree-vps") {
         Add-Content -Path $sshConfigFile -Value $sshConfigEntry
         Write-Host "✅ Entrada adicionada ao SSH config" -ForegroundColor Green
-    } else {
+    }
+    else {
         Write-Host "✅ SSH config já contém entrada para linktree-vps" -ForegroundColor Green
     }
-} else {
+}
+else {
     $sshConfigEntry | Out-File -FilePath $sshConfigFile -Encoding UTF8
     Write-Host "✅ SSH config criado com entrada para linktree-vps" -ForegroundColor Green
 }
